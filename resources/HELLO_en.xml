@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='us-ascii'?>
+<!DOCTYPE application PUBLIC "" "desktop.dtd">
+<application title="HELLO component" date="9/12/2001" author="C Caremoli" appId="HELLO" >
+<desktop>
+<!-- ### MENUBAR ###  -->
+<menubar>
+ <menu-item label-id="HELLO" item-id="90" pos-id="3">
+  <popup-item item-id="941" label-id="Get banner" icon-id="" tooltip-id="Get HELLO banner" accel-id="" toggle-id="" execute-action=""/>
+ </menu-item>
+</menubar>
+<!-- ### TOOLBAR ###  -->
+<toolbar label-id="HELLO">
+ <toolbutton-item item-id="941" label-id="Get banner" icon-id="ExecHELLO.png" tooltip-id="Get HELLO banner" accel-id="" toggle-id="" execute-action=""/>
+</toolbar>
+</desktop>
+</application>
+

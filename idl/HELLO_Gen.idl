@@ -1,0 +1,18 @@
+#ifndef __PYHELLO_GEN__
+#define __PYHELLO_GEN__
+
+#include "SALOME_Component.idl"
+#include "SALOME_Exception.idl"
+
+
+module HELLO_ORB
+{
+  interface HELLO_Gen : Engines::Component
+  {
+     string makeBanner(in string name)
+         raises (SALOME::SALOME_Exception);
+  };
+};
+
+#endif
+
