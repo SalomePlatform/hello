@@ -21,6 +21,7 @@ using namespace std;
 #include <qmessagebox.h>
 
 
+// launch HELLO component and return a handle
 HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen(QAD_Desktop* parent)
 {
     Engines::Component_var comp =
@@ -42,7 +43,7 @@ bool HELLOGUI::OnGUIEvent (int theCommandID, QAD_Desktop* parent)
 
   switch (theCommandID)
     {
-    case 941:
+    case 901: // call getBanner service
       {
 	MESSAGE("command " << theCommandID << " activated");
 
@@ -51,22 +52,17 @@ bool HELLOGUI::OnGUIEvent (int theCommandID, QAD_Desktop* parent)
 	
 	bool ok=FALSE;
 
-	QString meshName;
-	//meshName = QInputDialog::getText( "Saisie du Prénom", "Please, Enter your name", 
-	meshName = QInputDialog::getText( tr("QUE_HELLO_LABEL"), tr("QUE_HELLO_NAME"), 
+	// Dialog to get the Name
+	QString myName;
+	myName = QInputDialog::getText( tr("QUE_HELLO_LABEL"), tr("QUE_HELLO_NAME"), 
 		QLineEdit::Normal,
 		QString::null, &ok);
 
-	if ( ! meshName.isEmpty())
+	if ( ! myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
 	{
 	    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen(parent);
-	    QString banner = hellogen->makeBanner(meshName);
-	    QMessageBox::about( parent, tr("INF_HELLO_BANNER"), banner);
-
-	//    QAD_MessageBox::warn1 ((QWidget*)QAD_Application::getDesktop(),
-	//	    Object::tr("WRN_WARNING"), 
-	//	    QObject::tr("WRN_STUDY_LOCKED"),
-	//	    QObject::tr("BUT_OK"));
+	    QString banner = hellogen->makeBanner(myName);
+	    QAD_MessageBox::info1( parent, tr("INF_HELLO_BANNER"), banner, tr("BUT_OK"));
 	}
 	else
 	{
@@ -75,6 +71,10 @@ bool HELLOGUI::OnGUIEvent (int theCommandID, QAD_Desktop* parent)
 
       }
       break;
+    case 190: // just a test in File Menu
+      {
+	    QAD_MessageBox::warn1 (parent,tr("INF_HELLO_BANNER"),tr("INF_HELLO_MENU"),tr("BUT_OK"));
+      }
     }
   return true;
 }

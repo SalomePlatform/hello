@@ -10,14 +10,22 @@ msgstr ""
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
-#: HELLOGUI.cxx:64
+#: HELLOGUI.cxx:76
+msgid "HELLOGUI::BUT_OK"
+msgstr "OK"
+
+#: HELLOGUI.cxx:76
 msgid "HELLOGUI::INF_HELLO_BANNER"
 msgstr "Information HELLO"
 
-#: HELLOGUI.cxx:56
-msgid "HELLOGUI::QUE_HELLO_LABEL"
-msgstr "Import PrÃ©nom"
+#: HELLOGUI.cxx:76
+msgid "HELLOGUI::INF_HELLO_MENU"
+msgstr "Ceci est un simple test"
 
-#: HELLOGUI.cxx:56
+#: HELLOGUI.cxx:57
+msgid "HELLOGUI::QUE_HELLO_LABEL"
+msgstr "Import Prénom"
+
+#: HELLOGUI.cxx:57
 msgid "HELLOGUI::QUE_HELLO_NAME"
-msgstr "Entrez votre prÃ©nom, s'il vous plait"
+msgstr "Entrez votre prénom, s'il vous plait"
