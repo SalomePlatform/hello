@@ -2,7 +2,7 @@
 top_srcdir=@top_srcdir@
 top_builddir=../..
 srcdir=@srcdir@
-VPATH=.:@srcdir@:@top_srcdir@/idl:$(top_builddir)/idl:${KERNEL_ROOT_DIR}/idl/salome
+VPATH=.:@srcdir@:@top_srcdir@/idl
 
 @COMMENCE@
 
@@ -11,7 +11,7 @@ VPATH=.:@srcdir@:@top_srcdir@/idl:$(top_builddir)/idl:${KERNEL_ROOT_DIR}/idl/sal
 LIB = libHELLOEngine.la
 LIB_SRC = HELLO.cxx
 LIB_SERVER_IDL = HELLO_Gen.idl 
-LIB_CLIENT_IDL = SALOME_Component.idl SALOME_Exception.idl Logger.idl SALOMEDS.idl
+LIB_CLIENT_IDL = SALOME_Component.idl SALOME_Exception.idl Logger.idl 
 
 
 EXPORT_PYSCRIPTS =
@@ -20,9 +20,9 @@ EXPORT_PYSCRIPTS =
 # additionnal information to compil and link file
 
 CPPFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
-CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
+# CXXFLAGS += -I${KERNEL_ROOT_DIR}/include/salome
 
-LDFLAGS+= -lSalomeDS -lSalomeNS -lSalomeContainer -lOpUtil -L${KERNEL_ROOT_DIR}/lib/salome
+LDFLAGS+= -lSalomeContainer -lOpUtil -L${KERNEL_ROOT_DIR}/lib/salome
 
  
 # Executables targets
