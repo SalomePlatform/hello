@@ -1,14 +1,27 @@
-#ifndef __PYHELLO_GEN__
-#define __PYHELLO_GEN__
+#ifndef __HELLO_GEN__
+#define __HELLO_GEN__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
 
 #include "SALOME_Component.idl"
 #include "SALOME_Exception.idl"
 
 
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HELLO_ORB used 
+for  %HELLO component as an example in %SALOME application.
+*/
 module HELLO_ORB
 {
+  /*! \brief Interface of the %HELLO component
+   */
   interface HELLO_Gen : Engines::Component
   {
+     /*!
+         Set the Name and return the string concatenation of "hello, " and the given name.
+      */
      string makeBanner(in string name)
          raises (SALOME::SALOME_Exception);
   };
