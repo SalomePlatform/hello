@@ -4,6 +4,12 @@
 <desktop>
 <!-- ### MENUBAR ###  -->
 <menubar>
+ <menu-item label-id="File" item-id="1" pos-id="">
+  <submenu label-id="Hello" item-id="19" pos-id="9">
+   <popup-item item-id="190" pos-id="" label-id="MyNewItem" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+  </submenu>
+  <endsubmenu />
+ </menu-item>
  <menu-item label-id="HELLO" item-id="90" pos-id="3">
   <popup-item item-id="941" label-id="Lancer IHM" icon-id="" tooltip-id="Lancer IHM HELLO" accel-id="" toggle-id="" execute-action=""/>
  </menu-item>
