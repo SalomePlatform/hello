@@ -16,7 +16,7 @@ VPATH=.:@srcdir@:@top_srcdir@/bin:@top_srcdir@/resources:./bin:@top_srcdir@/idl
 SUBDIRS = idl src
 
 RESOURCES_FILES = HELLOCatalog.xml HELLO.png HELLO_en.xml \
-                  ExecHELLO.png
+                  ExecHELLO.png config
 
 BIN_SCRIPT= VERSION runAppli runSalome.py
 
