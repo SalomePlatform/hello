@@ -88,6 +88,50 @@ esac
 
 echo
 echo ---------------------------------------------
+echo testing C/C++
+echo ---------------------------------------------
+echo
+
+cc_ok=no
+dnl inutil car libtool
+dnl AC_PROG_CC
+AC_PROG_CXX
+AC_CXX_WARNINGS
+AC_CXX_TEMPLATE_OPTIONS
+AC_DEPEND_FLAG
+# AC_CC_WARNINGS([ansi])
+cc_ok=yes
+
+dnl Library libdl :
+AC_CHECK_LIB(dl,dlopen)
+
+dnl Library librt : for alpha/osf
+AC_CHECK_LIB(rt,nanosleep)
+
+dnl add library libm :
+AC_CHECK_LIB(m,ceil)
+
+AC_CXX_USE_STD_IOSTREAM
+AC_CXX_HAVE_SSTREAM
+
+dnl
+dnl ---------------------------------------------
+dnl testing linker
+dnl ---------------------------------------------
+dnl
+
+AC_LINKER_OPTIONS
+
+echo
+echo ---------------------------------------------
+echo testing threads
+echo ---------------------------------------------
+echo
+
+ENABLE_PTHREADS
+
+echo
+echo ---------------------------------------------
 echo testing python
 echo ---------------------------------------------
 echo
@@ -146,7 +190,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="python_ok omniORB_ok Kernel_ok qt_ok"
+variables="cc_ok threads_ok python_ok omniORB_ok Kernel_ok qt_ok"
 
 for var in $variables
 do

@@ -20,6 +20,10 @@ using namespace std;
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 
+HELLOGUI::HELLOGUI( const QString& theName, QObject* theParent ) :
+  SALOMEGUI( theName, theParent )
+{}
+
 
 // launch HELLO component and return a handle
 HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen(QAD_Desktop* parent)
@@ -97,9 +101,10 @@ bool HELLOGUI::CustomPopup ( QAD_Desktop* parent,
   return true;
 }
 
-void HELLOGUI::ActiveStudyChanged( QAD_Desktop* parent )
+bool HELLOGUI::ActiveStudyChanged( QAD_Desktop* parent )
 {
   MESSAGE("HELLOGUI::ActiveStudyChanged");
+  return true;
 }
 
 void HELLOGUI::DefinePopup( QString & theContext, QString & theParent, QString & theObject )
@@ -110,38 +115,10 @@ void HELLOGUI::DefinePopup( QString & theContext, QString & theParent, QString &
 }
 
 
-
-
+static HELLOGUI aGUI("");
 extern "C"
 {
-  bool OnGUIEvent(int theCommandID, QAD_Desktop* parent)
-  {
-    return HELLOGUI::OnGUIEvent(theCommandID, parent);
-  }
-
-
-  bool SetSettings ( QAD_Desktop* parent )
-  {
-    return HELLOGUI::SetSettings( parent );
-  }
-
-  bool customPopup ( QAD_Desktop* parent,
-		     QPopupMenu* popup,
-		     const QString & theContext,
-		     const QString & theParent,
-		     const QString & theObject )
-  {
-    return HELLOGUI::CustomPopup( parent, popup, theContext,
-				theParent, theObject );
-  }
-
-  void definePopup ( QString & theContext, QString & theParent, QString & theObject )
-  {
-    HELLOGUI::DefinePopup( theContext, theParent, theObject );
-  }
-  
-  bool activeStudyChanged ( QAD_Desktop* parent )
-  {
-    HELLOGUI::ActiveStudyChanged( parent );
+  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
+    return &aGUI;
   }
 }
