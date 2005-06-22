@@ -29,3 +29,34 @@ msgstr "Name Import"
 #: HELLOGUI.cxx:57
 msgid "HELLOGUI::QUE_HELLO_NAME"
 msgstr "Please, Enter your name"
+
+msgid "TLT_MY_NEW_ITEM"
+msgstr "My menu item"
+
+msgid "MEN_MY_NEW_ITEM"
+msgstr "My menu item"
+
+msgid "STS_MY_NEW_ITEM"
+msgstr "Call my menu item"
+
+msgid "TLT_GET_BANNER"
+msgstr "Get HELLO banner"
+
+msgid "MEN_GET_BANNER"
+msgstr "Get banner"
+
+msgid "STS_GET_BANNER"
+msgstr "Get HELLO banner"
+
+msgid "MEN_FILE"
+msgstr "&File"
+
+msgid "MEN_FILE_HELLO"
+msgstr "Hello"
+
+msgid "MEN_HELLO"
+msgstr "HELLO"
+
+msgid "TOOL_HELLO"
+msgstr "HELLO"
+

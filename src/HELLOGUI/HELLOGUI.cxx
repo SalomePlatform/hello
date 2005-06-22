@@ -1,124 +1,125 @@
-using namespace std;
 #include "HELLOGUI.h"
 
-// SALOME Includes
-#include "Utils_ORB_INIT.hxx"
-#include "Utils_SINGLETON.hxx"
-#include "utilities.h"
+#include <SUIT_MessageBox.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
 
-#include "SALOME_Selection.h"
-#include "SALOME_InteractiveObject.hxx"
-#include "SALOMEGUI_QtCatchCorbaException.hxx"
-
-#include "QAD_MessageBox.h"
-//#include "QAD_Tools.h"
-//#include "QAD_FileDlg.h"
-
-//#include "SMESH_TypeFilter.hxx"
+#include <SALOME_LifeCycleCORBA.hxx>
 
 // QT Includes
 #include <qinputdialog.h>
-#include <qmessagebox.h>
 
-HELLOGUI::HELLOGUI( const QString& theName, QObject* theParent ) :
-  SALOMEGUI( theName, theParent )
-{}
+using namespace std;
 
-
-// launch HELLO component and return a handle
-HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen(QAD_Desktop* parent)
+// Constructor
+HELLOGUI::HELLOGUI() :
+  SalomeApp_Module( "HELLO" ) // default name
 {
-    Engines::Component_var comp =
-	parent->getEngine("FactoryServer", "HELLO");
-    HELLO_ORB::HELLO_Gen_ptr clr = HELLO_ORB::HELLO_Gen::_narrow(comp);
-    ASSERT(!CORBA::is_nil(clr));
-    return clr;
-    //return clr._retn();
 }
 
-
-bool HELLOGUI::OnGUIEvent (int theCommandID, QAD_Desktop* parent)
+// Gets an reference to the module's engine
+HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen( SalomeApp_Application* app )
 {
-  MESSAGE("HELLOGUI::OnGUIEvent");
-  
-  QAD_Study* myActiveStudy   = parent->getActiveStudy();
-
-  QString file;
-
-  switch (theCommandID)
-    {
-    case 901: // call getBanner service
-      {
-	MESSAGE("command " << theCommandID << " activated");
-
-	QString myStudyName = myActiveStudy->getTitle();
-	int myStudyId = myActiveStudy->getStudyId();
-	
-	bool ok=FALSE;
-
-	// Dialog to get the Name
-	QString myName;
-	myName = QInputDialog::getText( tr("QUE_HELLO_LABEL"), tr("QUE_HELLO_NAME"), 
-		QLineEdit::Normal,
-		QString::null, &ok);
-
-	if ( ! myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
-	{
-	    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen(parent);
-	    QString banner = hellogen->makeBanner(myName);
-	    QAD_MessageBox::info1( parent, tr("INF_HELLO_BANNER"), banner, tr("BUT_OK"));
-	}
-	else
-	{
-	    MESSAGE("CANCEL");
-	}
-
-      }
-      break;
-    case 190: // just a test in File Menu
-      {
-	    QAD_MessageBox::warn1 (parent,tr("INF_HELLO_BANNER"),tr("INF_HELLO_MENU"),tr("BUT_OK"));
-      }
-    }
-  return true;
+  Engines::Component_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HELLO" );
+  HELLO_ORB::HELLO_Gen_ptr clr = HELLO_ORB::HELLO_Gen::_narrow(comp);
+  ASSERT(!CORBA::is_nil(clr));
+  return clr;
 }
 
-
-bool HELLOGUI::SetSettings (QAD_Desktop* parent)
+// Module's initialization
+void HELLOGUI::initialize( CAM_Application* app )
 {
-  MESSAGE("HELLOGUI::SetSettings");
-  return true;
+
+  SalomeApp_Module::initialize( app );
+
+  InitHELLOGen( dynamic_cast<SalomeApp_Application*>( app ) );
+
+  QWidget* aParent = app->desktop();
+  SUIT_ResourceMgr* aResourceMgr = app->resourceMgr();
+
+  // create actions
+  createAction( 190, tr( "TLT_MY_NEW_ITEM" ), QIconSet(), tr( "MEN_MY_NEW_ITEM" ), tr( "STS_MY_NEW_ITEM" ), 0, aParent, false,
+		this, SLOT( OnMyNewItem() ) );
+  QPixmap aPixmap = aResourceMgr->loadPixmap( "HELLO",tr( "ICON_GET_BANNER" ) );
+  createAction( 901, tr( "TLT_GET_BANNER" ), QIconSet( aPixmap ), tr( "MEN_GET_BANNER" ), tr( "STS_GET_BANNER" ), 0, aParent, false,
+		this, SLOT( OnGetBanner() ) );
+
+  // create menus
+  int aMenuId;
+  aMenuId = createMenu( tr( "MEN_FILE" ), -1, -1 );
+  createMenu( separator(), aMenuId, -1, 10 );
+  aMenuId = createMenu( tr( "MEN_FILE_HELLO" ), aMenuId, -1, 10 );
+  createMenu( 190, aMenuId );
+
+  aMenuId = createMenu( tr( "MEN_HELLO" ), -1, -1, 30 );
+  createMenu( 901, aMenuId, 10 );
+
+  // create toolbars
+  int aToolId = createTool ( tr( "TOOL_HELLO" ) );
+  createTool( 901, aToolId );
 }
 
-
-bool HELLOGUI::CustomPopup ( QAD_Desktop* parent,
-			   QPopupMenu* popup,
-			   const QString & theContext,
-			   const QString & theParent,
-			   const QString & theObject )
+// Module's engine IOR
+QString HELLOGUI::engineIOR() const
 {
-  MESSAGE("HELLOGUI::CustomPopup");
-  return true;
+  CORBA::String_var anIOR = getApp()->orb()->object_to_string( InitHELLOGen( getApp() ) );
+  return QString( anIOR.in() );
 }
 
-bool HELLOGUI::ActiveStudyChanged( QAD_Desktop* parent )
+// Module's activation
+bool HELLOGUI::activateModule( SUIT_Study* theStudy )
 {
-  MESSAGE("HELLOGUI::ActiveStudyChanged");
-  return true;
+  bool bOk = SalomeApp_Module::activateModule( theStudy );
+
+  setMenuShown( true );
+  setToolShown( true );
+
+  return bOk;
 }
 
-void HELLOGUI::DefinePopup( QString & theContext, QString & theParent, QString & theObject )
+// Module's deactivation
+bool HELLOGUI::deactivateModule( SUIT_Study* theStudy )
 {
-  MESSAGE("HELLOGUI::DefinePopup");
-  //theObject = "";
-  //theContext = "";
+  setMenuShown( false );
+  setToolShown( false );
+
+  return SalomeApp_Module::deactivateModule( theStudy );
 }
 
-
-static HELLOGUI aGUI("");
-extern "C"
+// Default windows
+void HELLOGUI::windows( QMap<int, int>& theMap ) const
 {
-  Standard_EXPORT SALOMEGUI* GetComponentGUI() {
-    return &aGUI;
+  theMap.clear();
+  theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
+  theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::DockBottom );
+}
+
+// Action slot
+void HELLOGUI::OnMyNewItem()
+{
+  SUIT_MessageBox::warn1( getApp()->desktop(),tr( "INF_HELLO_BANNER" ), tr( "INF_HELLO_MENU" ), tr( "BUT_OK" ) );
+}
+
+// Action slot
+void HELLOGUI::OnGetBanner()
+{
+  // Dialog to get the Name
+  bool ok = FALSE;
+  QString myName = QInputDialog::getText( tr( "QUE_HELLO_LABEL" ), tr( "QUE_HELLO_NAME" ),
+					  QLineEdit::Normal, QString::null, &ok );
+
+  if ( ok && !myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
+  {
+    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen( getApp() );
+    QString banner = hellogen->makeBanner( myName );
+    SUIT_MessageBox::info1( getApp()->desktop(), tr( "INF_HELLO_BANNER" ), banner, tr( "BUT_OK" ) );
+  }
+}
+
+// Export the module
+extern "C" {
+  CAM_Module* createModule()
+  {
+    return new HELLOGUI();
   }
 }

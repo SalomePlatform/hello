@@ -132,6 +132,14 @@ ENABLE_PTHREADS
 
 echo
 echo ---------------------------------------------
+echo BOOST Library
+echo ---------------------------------------------
+echo
+
+CHECK_BOOST
+
+echo
+echo ---------------------------------------------
 echo testing python
 echo ---------------------------------------------
 echo
@@ -145,6 +153,14 @@ echo ---------------------------------------------
 echo
 
 CHECK_QT
+
+echo
+echo ---------------------------------------------
+echo testing msg2qm
+echo ---------------------------------------------
+echo
+
+CHECK_MSG2QM
 
 echo
 echo ---------------------------------------------
@@ -185,12 +201,20 @@ CHECK_KERNEL
 
 echo
 echo ---------------------------------------------
+echo Testing GUI
+echo ---------------------------------------------
+echo
+
+CHECK_SALOME_GUI
+
+echo
+echo -------H--------------------------------------
 echo Summary
 echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok threads_ok python_ok omniORB_ok Kernel_ok qt_ok"
+variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok msg2qm_ok Kernel_ok SalomeGUI_ok"
 
 for var in $variables
 do

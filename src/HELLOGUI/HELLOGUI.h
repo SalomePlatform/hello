@@ -4,41 +4,32 @@
 #ifndef _HELLOGUI_H_
 #define _HELLOGUI_H_
 
-#include "SALOMEGUI.h"
-#include "QAD_Desktop.h"
+#include <SalomeApp_Module.h>
 
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(HELLO_Gen)
 
-
-
-class HELLOGUI: public SALOMEGUI
+class SalomeApp_Application;
+class HELLOGUI: public SalomeApp_Module
 {
   Q_OBJECT
 
 public:
-  HELLOGUI( const QString& name = "", QObject* parent = 0 );
+  HELLOGUI();
 
-  virtual bool OnGUIEvent (int theCommandID, QAD_Desktop* parent);
+  void    initialize( CAM_Application* );
+  QString engineIOR() const;
+  void    windows( QMap<int, int>& ) const;
 
-  virtual bool SetSettings (QAD_Desktop* parent);
+  static HELLO_ORB::HELLO_Gen_ptr InitHELLOGen( SalomeApp_Application* );
 
-  virtual bool CustomPopup ( QAD_Desktop* parent,
-			    QPopupMenu* popup,
-			    const QString & theContext,
-			    const QString & theParent,
-			    const QString & theObject);
+public slots:
+  bool    deactivateModule( SUIT_Study* );
+  bool    activateModule( SUIT_Study* );
 
-  virtual void DefinePopup(QString & theContext, QString & theParent, QString & theObject);
-
-  virtual bool ActiveStudyChanged ( QAD_Desktop* parent );
-
-  static HELLO_ORB::HELLO_Gen_ptr InitHELLOGen(QAD_Desktop* parent);
-
-protected:
-
-private:
-
+protected slots:
+  void            OnMyNewItem();
+  void            OnGetBanner();
 };
 
 #endif
