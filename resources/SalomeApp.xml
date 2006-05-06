@@ -1,0 +1,11 @@
+<document>
+  <section name="HELLO">
+    <!-- Major module parameters -->
+    <parameter name="name" value="Hello"/>
+    <parameter name="icon" value="HELLO.png"/>
+  </section>
+  <section name="resources">
+    <!-- Module resources -->
+    <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources"/>
+  </section>
+</document>
