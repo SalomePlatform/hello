@@ -6,6 +6,6 @@
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources"/>
+    <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources/hello"/>
   </section>
 </document>
