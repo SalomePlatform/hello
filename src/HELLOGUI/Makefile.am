@@ -59,8 +59,7 @@ libHELLO_la_LDFLAGS  = \
 	../HELLO/libHELLOEngine.la \
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA \
 	$(GUI_LDFLAGS) \
-	-lSalomeApp \
-	-lHELLOEngine
+	-lSalomeApp
 
 # resources files
 nodist_salomeres_DATA = \
