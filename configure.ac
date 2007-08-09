@@ -159,13 +159,13 @@ echo
 
 CHECK_QT
 
-echo
-echo ---------------------------------------------
-echo testing msg2qm
-echo ---------------------------------------------
-echo
+dnl echo
+dnl echo ---------------------------------------------
+dnl echo testing msg2qm
+dnl echo ---------------------------------------------
+dnl echo
 
-CHECK_MSG2QM
+dnl CHECK_MSG2QM
 
 echo
 echo ---------------------------------------------
@@ -240,7 +240,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok msg2qm_ok Kernel_ok SalomeGUI_ok"
+variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok Kernel_ok SalomeGUI_ok"
 
 for var in $variables
 do
