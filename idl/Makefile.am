@@ -40,6 +40,7 @@ lib_LTLIBRARIES = libSalomeIDLHELLO.la
 nodist_libSalomeIDLHELLO_la_SOURCES = \
 	HELLO_GenSK.cc \
 	HELLO_GenDynSK.cc
+HELLO_GenDynSK.cc: HELLO_GenSK.cc
 
 # header files must be exported: other modules have to use this library
 nodist_salomeinclude_HEADERS= $(BASEIDL_FILES:%.idl=%.hh)
