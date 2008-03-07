@@ -1,4 +1,5 @@
-#  Copyright (C) 2005  CEA/DEN, EDF R&D
+#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -14,35 +15,16 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-# source path
-top_srcdir=@top_srcdir@
-top_builddir=../..
-srcdir=@srcdir@
-VPATH=.:@srcdir@:@top_srcdir@/idl
+#
+#  $Header$
 
-@COMMENCE@
+include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# Libraries targets
+dist_salomeres_DATA = \
+SalomeApp.xml \
+HELLO.png \
+ExecHELLO.png
 
-LIB = libHELLOEngine.la
-LIB_SRC = HELLO.cxx
-LIB_SERVER_IDL = HELLO_Gen.idl 
-LIB_CLIENT_IDL = SALOME_Component.idl SALOME_Exception.idl Logger.idl 
-
-
-EXPORT_PYSCRIPTS =
-
-
-# additionnal information to compil and link file
-
-CPPFLAGS += $(KERNEL_CXXFLAGS)
-
-LDFLAGS+= $(KERNEL_LDFLAGS) -lSalomeContainer -lOpUtil
-
- 
-# Executables targets
-
-@CONCLUDE@
-
+nodist_salomeres_DATA = HELLOCatalog.xml
