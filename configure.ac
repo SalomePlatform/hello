@@ -154,14 +154,6 @@ echo
 
 CHECK_QT
 
-dnl echo
-dnl echo ---------------------------------------------
-dnl echo testing msg2qm
-dnl echo ---------------------------------------------
-dnl echo
-
-dnl CHECK_MSG2QM
-
 echo
 echo ---------------------------------------------
 echo BOOST Library
