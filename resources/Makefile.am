@@ -27,4 +27,5 @@ SalomeApp.xml \
 HELLO.png \
 ExecHELLO.png
 
-nodist_salomeres_DATA = HELLOCatalog.xml
+# VSR: little trick to avoid putting if HELLOCatalog.xml to the distribution archive
+nodist_salomeres_SCRIPTS = HELLOCatalog.xml
