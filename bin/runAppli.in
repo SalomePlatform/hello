@@ -41,4 +41,4 @@ searchFreePort() {
 searchFreePort
 
 
-${KERNEL_ROOT_DIR}/bin/salome/envSalome.py python -i $HELLO_ROOT_DIR/bin/salome/myrunSalome.py --modules=HELLO --containers=cpp,python --killall
+${KERNEL_ROOT_DIR}/bin/salome/envSalome.py python -i $HELLO_ROOT_DIR/bin/salome/myrunSalome.py --modules=HELLO --killall
