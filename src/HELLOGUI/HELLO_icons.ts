@@ -1,3 +1,4 @@
+<!DOCTYPE TS>
 <!--
   Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 
@@ -21,14 +22,12 @@
   See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 -->
-<document>
-  <section name="HELLO">
-    <!-- Major module parameters -->
-    <parameter name="name" value="Hello"/>
-    <parameter name="icon" value="HELLO.png"/>
-  </section>
-  <section name="resources">
-    <!-- Module resources -->
-    <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources/hello"/>
-  </section>
-</document>
+<TS version="1.1" >
+    <context>
+        <name>@default</name>
+        <message>
+            <source>ICON_GET_BANNER</source>
+            <translation>ExecHELLO.png</translation>
+        </message>
+    </context>
+</TS>

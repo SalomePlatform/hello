@@ -1,31 +1,36 @@
-// Copyright (C) 2005  CEA/DEN, EDF R&D
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HELLOGUI.h"
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
 
 #include <SALOME_LifeCycleCORBA.hxx>
 
 // QT Includes
-#include <qinputdialog.h>
+#include <QInputDialog>
+#include <QIcon>
 
 using namespace std;
 
@@ -52,14 +57,14 @@ void HELLOGUI::initialize( CAM_Application* app )
 
   InitHELLOGen( dynamic_cast<SalomeApp_Application*>( app ) );
 
-  QWidget* aParent = app->desktop();
+  QWidget* aParent = application()->desktop();
   SUIT_ResourceMgr* aResourceMgr = app->resourceMgr();
 
   // create actions
-  createAction( 190, tr( "TLT_MY_NEW_ITEM" ), QIconSet(), tr( "MEN_MY_NEW_ITEM" ), tr( "STS_MY_NEW_ITEM" ), 0, aParent, false,
+  createAction( 190, tr( "TLT_MY_NEW_ITEM" ), QIcon(), tr( "MEN_MY_NEW_ITEM" ), tr( "STS_MY_NEW_ITEM" ), 0, aParent, false,
 		this, SLOT( OnMyNewItem() ) );
   QPixmap aPixmap = aResourceMgr->loadPixmap( "HELLO",tr( "ICON_GET_BANNER" ) );
-  createAction( 901, tr( "TLT_GET_BANNER" ), QIconSet( aPixmap ), tr( "MEN_GET_BANNER" ), tr( "STS_GET_BANNER" ), 0, aParent, false,
+  createAction( 901, tr( "TLT_GET_BANNER" ), QIcon( aPixmap ), tr( "MEN_GET_BANNER" ), tr( "STS_GET_BANNER" ), 0, aParent, false,
 		this, SLOT( OnGetBanner() ) );
 
   // create menus
@@ -108,14 +113,14 @@ bool HELLOGUI::deactivateModule( SUIT_Study* theStudy )
 void HELLOGUI::windows( QMap<int, int>& theMap ) const
 {
   theMap.clear();
-  theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::DockLeft );
-  theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::DockBottom );
+  theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+  theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::BottomDockWidgetArea );
 }
 
 // Action slot
 void HELLOGUI::OnMyNewItem()
 {
-  SUIT_MessageBox::warn1( getApp()->desktop(),tr( "INF_HELLO_BANNER" ), tr( "INF_HELLO_MENU" ), tr( "BUT_OK" ) );
+  SUIT_MessageBox::warning( getApp()->desktop(),tr( "INF_HELLO_BANNER" ), tr( "INF_HELLO_MENU" ) );
 }
 
 // Action slot
@@ -123,14 +128,14 @@ void HELLOGUI::OnGetBanner()
 {
   // Dialog to get the Name
   bool ok = FALSE;
-  QString myName = QInputDialog::getText( tr( "QUE_HELLO_LABEL" ), tr( "QUE_HELLO_NAME" ),
+  QString myName = QInputDialog::getText( getApp()->desktop(), tr( "QUE_HELLO_LABEL" ), tr( "QUE_HELLO_NAME" ),
 					  QLineEdit::Normal, QString::null, &ok );
 
   if ( ok && !myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
   {
     HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen( getApp() );
-    QString banner = hellogen->makeBanner( myName );
-    SUIT_MessageBox::info1( getApp()->desktop(), tr( "INF_HELLO_BANNER" ), banner, tr( "BUT_OK" ) );
+    QString banner = hellogen->makeBanner( (const char*)myName.toLatin1() );
+    SUIT_MessageBox::information( getApp()->desktop(), tr( "INF_HELLO_BANNER" ), banner, tr( "BUT_OK" ) );
   }
 }
 
