@@ -36,7 +36,8 @@ using namespace std;
 
 // Constructor
 HELLOGUI::HELLOGUI() :
-  SalomeApp_Module( "HELLO" ) // default name
+  SalomeApp_Module( "HELLO" ), // default name
+  LightApp_Module( "HELLO" )
 {
 }
 
