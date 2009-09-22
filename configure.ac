@@ -163,11 +163,41 @@ AM_PATH_PYTHON(2.3)
 
 echo
 echo ---------------------------------------------
-echo testing QT
+echo Testing GUI
 echo ---------------------------------------------
 echo
 
-CHECK_QT
+CHECK_GUI_MODULE
+
+gui_ok=no
+if test "${SalomeGUI_need}" != "no" -a "${FullGUI_ok}" = "yes" ; then 
+  gui_ok=yes
+fi
+
+AM_CONDITIONAL(HELLO_ENABLE_GUI, [test "${gui_ok}" = "yes"])
+
+if test "${SalomeGUI_need}" == "yes"; then
+  if test "${FullGUI_ok}" != "yes"; then
+    AC_MSG_WARN(For configure HELLO module necessary full GUI!)
+  fi
+elif test "${SalomeGUI_need}" == "auto"; then
+  if test "${FullGUI_ok}" != "yes"; then
+    AC_MSG_WARN(Full GUI not found. Build will be done without GUI!)
+  fi
+elif test "${SalomeGUI_need}" == "no"; then
+  echo Build without GUI option has been chosen
+fi
+
+if test "${gui_ok}" = "yes"; then
+	echo
+	echo ---------------------------------------------
+	echo testing QT
+	echo ---------------------------------------------
+	echo
+
+	CHECK_QT
+	
+fi
 
 echo
 echo ---------------------------------------------
@@ -216,33 +246,19 @@ CHECK_KERNEL
 
 echo
 echo ---------------------------------------------
-echo Testing GUI
-echo ---------------------------------------------
-echo
-
-CHECK_SALOME_GUI
-
-echo
-echo ---------------------------------------------
-echo Testing full GUI
-echo ---------------------------------------------
-echo
-
-CHECK_CORBA_IN_GUI
-if test "x${CORBA_IN_GUI}" != "xyes"; then
-  echo "failed : For configure HELLO1 module necessary full GUI !"
-  exit
-fi
-
-
-echo
-echo ---------------------------------------------
 echo Summary
 echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok Kernel_ok SalomeGUI_ok"
+
+if test "${gui_ok}" = "yes"; then
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok Kernel_ok gui_ok"
+elif test "${SalomeGUI_need}" != "no"; then
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok Kernel_ok gui_ok"
+else
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok Kernel_ok"
+fi
 
 for var in $variables
 do

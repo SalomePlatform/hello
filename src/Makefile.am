@@ -25,4 +25,8 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-SUBDIRS = HELLO HELLOGUI
+SUBDIRS = HELLO
+
+if HELLO_ENABLE_GUI
+	SUBDIRS += HELLOGUI
+endif
