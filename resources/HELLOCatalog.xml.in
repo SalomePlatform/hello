@@ -45,6 +45,33 @@
                 <component-icone>HELLO.png</component-icone>
                 <constraint>'linux' ~ OS</constraint>
 	
+            	<component-interface-list>
+	                <component-interface-name>SMESH</component-interface-name>
+        		<component-interface-comment></component-interface-comment>
+                	<component-service-list>
+                    		<component-service>
+                        		<service-name>makeBanner</service-name>
+                        		<service-author></service-author>
+                        		<service-version></service-version>
+                        		<service-comment></service-comment>
+                        		<service-by-default>1</service-by-default>
+                        		<inParameter-list>
+                             			<inParameter>
+                                			<inParameter-type>string</inParameter-type>
+                                			<inParameter-name>name</inParameter-name>
+                                			<inParameter-comment></inParameter-comment>
+                            			</inParameter>
+                        		</inParameter-list>
+                        		<outParameter-list>
+			    			<outParameter>
+                                			<outParameter-type>string</outParameter-type>
+                                			<outParameter-name>return</outParameter-name>
+                                			<outParameter-comment></outParameter-comment>
+                            			</outParameter>
+                        		</outParameter-list>
+                    		</component-service>
+             	   	</component-service-list>
+            	</component-interface-list>
 	</component>
 </component-list>
 </begin-catalog>
