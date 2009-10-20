@@ -28,5 +28,5 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 SUBDIRS = HELLO
 
 if HELLO_ENABLE_GUI
-	SUBDIRS += HELLOGUI
+  SUBDIRS += HELLOGUI
 endif
