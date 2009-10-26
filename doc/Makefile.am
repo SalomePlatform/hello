@@ -21,6 +21,31 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-dist_doc_DATA = dev_guide.html
+usr_docs: doxyfile
+	$(DOXYGEN) doxyfile
 
-EXTRA_DIST   += dev_guide.txt
+docs: usr_docs
+
+dev_docs:
+
+clean-local:
+	@for filen in `find . -maxdepth 1` ; do			\
+	  case $${filen} in					\
+	    ./Makefile | ./doxyfile ) ;;			\
+	    . | .. ) ;;						\
+	    *) echo "Removing $${filen}" ; rm -rf $${filen} ;;	\
+	  esac ;						\
+	done ;
+
+install-data-local: usr_docs
+	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/HELLO
+	@for filen in `find . -maxdepth 1` ; do			\
+	  case $${filen} in					\
+	    ./Makefile | ./doxyfile | ./doxyfile.bak ) ;;	\
+	    . | .. ) ;;						\
+	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/HELLO ;;	\
+	  esac ;										\
+	done ;
+
+uninstall-local:
+	rm -rf $(DESTDIR)$(docdir)/gui/HELLO

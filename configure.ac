@@ -238,6 +238,14 @@ CORBA=adm_local/unix/$corba
 
 echo
 echo ---------------------------------------------
+echo Testing html generators
+echo ---------------------------------------------
+echo
+
+CHECK_HTML_GENERATORS
+
+echo
+echo ---------------------------------------------
 echo Testing Kernel
 echo ---------------------------------------------
 echo
@@ -253,11 +261,11 @@ echo
 echo Configure
 
 if test "${gui_ok}" = "yes"; then
-  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok Kernel_ok gui_ok"
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok doxygen_ok Kernel_ok gui_ok"
 elif test "${SalomeGUI_need}" != "no"; then
-  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok Kernel_ok gui_ok"
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok doxygen_ok Kernel_ok gui_ok"
 else
-  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok Kernel_ok"
+  variables="cc_ok threads_ok boost_ok python_ok omniORB_ok doxygen_ok Kernel_ok"
 fi
 
 for var in $variables
@@ -299,6 +307,7 @@ AC_OUTPUT([ \
   bin/runAppli \
   bin/Makefile \
   doc/Makefile \
+  doc/doxyfile \
   HELLO_version.h \
   resources/HELLOCatalog.xml \
   src/Makefile \
