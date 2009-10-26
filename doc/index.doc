@@ -27,7 +27,7 @@ Contents:
 The example module chosen to illustrate the process of SALOME module
 development is extremely simple. The module contains a single
 component and this component provides a single service called \b
-getBanner that accepts a character string as the sole argument and
+makeBanner that accepts a character string as the sole argument and
 that returns a character string obtained by the concatenation of a
 'Hello' and the input string. The component also provides a simple
 GUI.
@@ -141,14 +141,15 @@ file provides a procedure to test availability of SALOME GUI
 module and thus specify if GUI library of HELLO module should be built
 or no.
 
-- bin/ VERSION.in
+- bin/VERSION.in
 
 This file is used to document the module, it must give its version (at
 least) and (optionally) compatibilities or incompatibilities with
 other modules. This file is strongly recommended but is not essential
 for operation of the module.
 
-- runAppli.in, runSalome.py
+- bin/runAppli.in
+- bin/runSalome.py
 
 These files are not essential but make the example easier to
 use. These are scripts that can be used to run SALOME session with
@@ -190,15 +191,15 @@ defines images and icons resources used within the GUI library of
 HELLO module. Please refer to Qt linguist documentation for more
 details.
 
-- HELLO.png
-- ExecHELLO.png
+- resources/HELLO.png
+- resources/ExecHELLO.png
 
 The resources folder usually includes different resource files used
 within the SALOME module. For example, HELLO.png file provides an icon
 of HELLO module to be shown in the SALOME GUI desktop. ExecHELLO.png is
 an icon for the makeBanner() function used in the menu and toolbar.
 
-- HELLOCatalog.xml.in
+- resources/HELLOCatalog.xml.in
 
 The XML description of the CORBA services provided by the HELLO
 module. This file is parsed by Supervisor and YACS module to generate
@@ -207,7 +208,7 @@ simplest way to create this file is to use Catalog Generator utility
 provided by the SALOME KERNEL module, that can automatically generate
 XML description file from the IDL file.
 
-- SalomeApp.xml
+- resources/SalomeApp.xml
 
 This file is essential for the module. It provides some parameters of
 the module which define module behavior in SALOME. In particular it
@@ -219,10 +220,12 @@ module ("HELLO" in this case) with the following parameters:
     <parameter name="icon" value="HELLO.png"/>
   </section>
 \endcode
+
 The "name" parameter defines GUI name of a module. The "icon"
 parameter defines a GUI icon of a module.
 The section "resources" also specifies the directory that contains
 resources of a module (icons, translation files, etc).
+
 \code
   <section name="resources">
     <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources/hello"/>
@@ -272,6 +275,7 @@ The file \b make_common_starter.am file in the adm_local directory of
 the example module provides basic build rules to be used in other
 Makefile.am files. To refer to this file in the Makefile.am it is
 necessary to use "include" clause:
+
 \code
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 \endcode
@@ -301,8 +305,8 @@ of the Engines module. The name of the CORBA module will be
 \page src_dir The src directory
 
 The src contains all source files required to build CORBA engine and
-(optionally) GUI libraries of the module. Each of these entities must
-have its own directory.
+(optionally) GUI libraries of the module. Each of these entities usually
+has (but this is not actually obligatory) its own directory.
 
 The Makefile.am simply triggers the path of sub-directories described
 by the SUBDIRS target.
@@ -359,7 +363,7 @@ This directory contains the C++ source files that implement the GUI
 library of HELLO module. By default, the name of the module
 GUI library is predefined and should be set as lib<MODULE>.so
 where <MODULE> is a name of the module. In the case of the HELLO
-module, the name of the engine library should be libHELLO.so. It is
+module, the name of the GUI library should be libHELLO.so. It is
 also possible to use custom name of the GUI library of a module, but
 in this case, in order to be possible to use this module in SALOME GUI
 desktop, the name of the GUI library should be defined in the
@@ -408,6 +412,7 @@ please refer to the SALOME GUI module documentation.
   corresponding actions;
 - createSelection() - create and return menu selection object; this is
   a part of the context popup menu definition API
+- engineIOR() - to get the reference to the module CORBA engine
 
 Note, that all of these methods are optional and need not be
 obligatory implemented because SalomeApp_Module class provides a
@@ -417,7 +422,17 @@ implement only some of them, depending on the module needs.
 In the case of HELLO module, only the following methods are
 implemented:
 
-- initialize() that creates single action for eingine's makeBanner()
+- engineIOR() that initializes HELLO module's eggine:
+
+\code
+QString HELLOGUI::engineIOR() const
+{
+  CORBA::String_var anIOR = getApp()->orb()->object_to_string( InitHELLOGen( getApp() ) );
+  return QString( anIOR.in() );
+}
+\endcode
+
+- initialize() that creates single action for engine's makeBanner()
   service:
 
 \code
@@ -466,6 +481,35 @@ bool HELLOGUI::deactivateModule( SUIT_Study* theStudy )
   setMenuShown( false );
   setToolShown( false );
   return SalomeApp_Module::deactivateModule( theStudy );
+}
+\endcode
+
+An implemention of the OnGetBanner() method is quite simple. It shows
+the small dialog box allowing user to enter the name, and then uses
+reference to the module CORBA engine to invoke its makeBanner()
+service:
+
+\code
+void HELLOGUI::OnGetBanner()
+{
+  // Dialog to get the Name
+  bool ok = FALSE;
+  QString myName = QInputDialog::getText( getApp()->desktop(),
+                                          tr( "QUE_HELLO_LABEL" ),
+                                          tr( "QUE_HELLO_NAME" ),
+                                          QLineEdit::Normal,
+                                          QString::null, &ok );
+  // if we got a name, get a HELLO component and ask for makeBanner
+  if ( ok && !myName.isEmpty())
+  {
+    // invoke CORBA service of an engine
+    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen( getApp() );
+    QString banner = hellogen->makeBanner( (const char*)myName.toLatin1() );
+    // show result in the message box
+    SUIT_MessageBox::information( getApp()->desktop(),
+                                  tr( "INF_HELLO_BANNER" ),
+                                  banner, tr( "BUT_OK" ) );
+  }
 }
 \endcode
 
