@@ -306,6 +306,7 @@ AC_OUTPUT([ \
   bin/Makefile \
   doc/Makefile \
   doc/doxyfile \
+  doc/static/header.html \
   HELLO_version.h \
   resources/HELLOCatalog.xml \
   src/Makefile \
