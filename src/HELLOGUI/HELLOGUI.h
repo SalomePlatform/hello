@@ -22,6 +22,7 @@
 
 //  HELLOGUI : HELLO component GUI implemetation 
 //
+
 #ifndef _HELLOGUI_H_
 #define _HELLOGUI_H_
 
@@ -31,26 +32,54 @@
 #include CORBA_CLIENT_HEADER(HELLO_Gen)
 
 class SalomeApp_Application;
+
 class HELLOGUI: public SalomeApp_Module
 {
   Q_OBJECT
 
 public:
   HELLOGUI();
+  ~HELLOGUI();
 
-  void    initialize( CAM_Application* );
-  QString engineIOR() const;
-  void    windows( QMap<int, int>& ) const;
+  static HELLO_ORB::HELLO_Gen_ptr InitHELLOGen( SalomeApp_Application* app );
 
-  static HELLO_ORB::HELLO_Gen_ptr InitHELLOGen( SalomeApp_Application* );
+  virtual void                initialize( CAM_Application* app );
+  virtual QString             engineIOR() const;
+
+  virtual QPixmap             moduleIcon() const;
+  virtual QString             iconName() const;
+
+  virtual void                windows( QMap<int, int>& theMap ) const;
+  virtual void                viewManagers( QStringList& theList ) const;
+
+  virtual LightApp_Selection* createSelection() const;
+  virtual LightApp_Displayer* displayer();
+
+  virtual void                contextMenuPopup( const QString& type, QMenu* menu, QString& title );
+
+  virtual void                createPreferences();
+  virtual void                preferencesChanged( const QString& section, const QString& parameter );
+
+  virtual void                storeVisualParameters( int savePoint );
+  virtual void                restoreVisualParameters( int savePoint );
+
+  virtual void                studyActivated();
+
+  virtual bool                canCopy() const;
+  virtual bool                canPaste() const;
+  virtual void                copy();
+  virtual void                paste();
 
 public slots:
-  bool    deactivateModule( SUIT_Study* );
-  bool    activateModule( SUIT_Study* );
+  virtual bool                activateModule( SUIT_Study* theStudy );
+  virtual bool                deactivateModule( SUIT_Study* theStudy );
+
+protected:
+  virtual LightApp_Operation* createOperation( const int id ) const;
 
 protected slots:
-  void            OnMyNewItem();
-  void            OnGetBanner();
+  void                        OnMyNewItem();
+  void                        OnGetBanner();
 };
 
-#endif
+#endif // _HELLOGUI_H_
