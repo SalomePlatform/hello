@@ -39,7 +39,7 @@ module HELLO_ORB
 {
   /*! \brief Interface of the %HELLO component
    */
-  interface HELLO_Gen : Engines::Component
+  interface HELLO_Gen : Engines::EngineComponent
   {
      /*!
          Set the Name and return the string concatenation of "hello, " and the given name.

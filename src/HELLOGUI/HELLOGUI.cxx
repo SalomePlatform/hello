@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "HELLOGUI.h"
 
@@ -70,7 +69,7 @@ HELLOGUI::~HELLOGUI()
 */
 HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen( SalomeApp_Application* app )
 {
-  Engines::Component_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HELLO" );
+  Engines::EngineComponent_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HELLO" );
   HELLO_ORB::HELLO_Gen_ptr clr = HELLO_ORB::HELLO_Gen::_narrow(comp);
   ASSERT(!CORBA::is_nil(clr));
   return clr;
