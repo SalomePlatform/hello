@@ -634,8 +634,8 @@ This command will not function unless the following environment
 variables have previously been set:
 
 <pre>
-export KERNEL_ROOT_DIR=<KERNEL installation path>
-export HELLO_ROOT_DIR=<HELLO installation path>
+export KERNEL_ROOT_DIR=<KERNEL_module_installation_dir>
+export HELLO_ROOT_DIR=<HELLO_module_installation_dir>
 </pre>
 
 \warning It is possible that the SALOME run will not reach the end.
