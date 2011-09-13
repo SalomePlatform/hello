@@ -21,6 +21,7 @@
 //
 
 #include "HELLOGUI.h"
+#include <HELLO_version.h>
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -627,5 +628,10 @@ extern "C" {
   CAM_Module* createModule()
   {
     return new HELLOGUI();
+  }
+  
+  char* getModuleVersion() 
+  {
+    return HELLO_VERSION_STR;
   }
 }

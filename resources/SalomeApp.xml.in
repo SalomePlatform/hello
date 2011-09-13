@@ -26,6 +26,7 @@
     <!-- Major module parameters -->
     <parameter name="name"            value="Hello"/>
     <parameter name="icon"            value="HELLO.png"/>
+    <parameter name="HELLO_VERSION"   value="@VERSION@"/>
     <parameter name="documentation"   value="hello_help"/>
   </section>
   <section name="resources">

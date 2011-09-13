@@ -336,6 +336,7 @@ AC_OUTPUT([ \
   doc/static/header.html \
   HELLO_version.h \
   resources/HELLOCatalog.xml \
+  resources/SalomeApp.xml \
   src/Makefile \
   src/HELLO/Makefile \
   src/HELLOGUI/Makefile \

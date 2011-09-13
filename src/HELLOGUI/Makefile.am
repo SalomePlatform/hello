@@ -50,7 +50,8 @@ libHELLO_la_CPPFLAGS = \
 	$(KERNEL_CXXFLAGS) \
 	$(GUI_CXXFLAGS) \
 	-I$(srcdir)/../HELLO \
-	-I$(top_builddir)/idl
+	-I$(top_builddir)/idl \
+	-I$(top_builddir)
 
 libHELLO_la_LDFLAGS  = \
 	../../idl/libSalomeIDLHELLO.la \
