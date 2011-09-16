@@ -234,6 +234,16 @@ resources of a module (icons, translation files, etc).
   </section>
 \endcode
 
+The section [module_name]_help provides information on the location of 
+the help page and the eventual sub-menu in the Help menu.
+
+\code
+  <section name="hello_help" >
+    <parameter name="sub_menu"        value="Samples"/>
+    <parameter name="%1 User's Guide" value="%HELLO_ROOT_DIR%/share/doc/salome/gui/HELLO/index.html"/>
+  </section>
+\endcode
+
 - doc/doxyfile.in
 
 The Doxygen configuration file. The Doxygen is used to build this
