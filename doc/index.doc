@@ -92,7 +92,7 @@ The following file structure is typical for the SALOME module:
      + HELLO.png
      + ExecHELLO.png
      + HELLOCatalog.xml.in
-     + SalomeApp.xml
+     + SalomeApp.xml.in
    + doc
      + Makefile.am
      + doxyfile.in
@@ -208,7 +208,7 @@ simplest way to create this file is to use Catalog Generator utility
 provided by the SALOME KERNEL module, that can automatically generate
 XML description file from the IDL file.
 
-- resources/SalomeApp.xml
+- resources/SalomeApp.xml.in
 
 This file is essential for the module. It provides some parameters of
 the module which define module behavior in SALOME. In particular it
@@ -216,19 +216,21 @@ should provide a section with the name corresponding to the name of a
 module ("HELLO" in this case) with the following parameters:
 \code
   <section name="HELLO">
-    <parameter name="name" value="Hello"/>
-    <parameter name="icon" value="HELLO.png"/>
+    <parameter name="name"    value="Hello"/>
+    <parameter name="icon"    value="HELLO.png"/>
+    <parameter name="version" value="@VERSION@"/>
   </section>
 \endcode
 
 The "name" parameter defines GUI name of a module. The "icon"
-parameter defines a GUI icon of a module.
+parameter defines a GUI icon of a module. The "version" parameter
+defines the version fo the module.
 The section "resources" also specifies the directory that contains
 resources of a module (icons, translation files, etc).
 
 \code
   <section name="resources">
-    <parameter name="HELLO" value="${HELLO_ROOT_DIR}/share/salome/resources/hello"/>
+    <parameter name="HELLO" value="%HELLO_ROOT_DIR%/share/salome/resources/hello"/>
   </section>
 \endcode
 
