@@ -632,6 +632,6 @@ extern "C" {
   
   char* getModuleVersion() 
   {
-    return HELLO_VERSION_STR;
+    return (char*)HELLO_VERSION_STR;
   }
 }

@@ -26,15 +26,15 @@
     <!-- Major module parameters -->
     <parameter name="name"            value="Hello"/>
     <parameter name="icon"            value="HELLO.png"/>
-    <parameter name="HELLO_VERSION"   value="@VERSION@"/>
+    <parameter name="version"         value="@VERSION@"/>
     <parameter name="documentation"   value="hello_help"/>
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="HELLO"           value="${HELLO_ROOT_DIR}/share/salome/resources/hello"/>
+    <parameter name="HELLO"           value="%HELLO_ROOT_DIR%/share/salome/resources/hello"/>
   </section>
   <section name="hello_help" >
     <parameter name="sub_menu"        value="Samples"/>
-    <parameter name="%1 User's Guide" value="${HELLO_ROOT_DIR}/share/doc/salome/gui/HELLO/index.html"/>
+    <parameter name="%1 User's Guide" value="%HELLO_ROOT_DIR%/share/doc/salome/gui/HELLO/index.html"/>
   </section>
 </document>
