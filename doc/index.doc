@@ -517,13 +517,19 @@ void HELLOGUI::OnGetBanner()
 
 In addition, HELLOGUI.cxx implements a factory function which is used
 by the SALOME GUI to create an instance of the HELLO GUI class instance
-by demand:
+by demand. It implements also another factory function to retrieve the
+version number of the module (in the About dialog for example):
 
 \code
 extern "C" {
   CAM_Module* createModule()
   {
     return new HELLOGUI();
+  }
+
+  char* getModuleVersion() 
+  {
+    return (char*)HELLO_VERSION_STR;
   }
 }
 \endcode
