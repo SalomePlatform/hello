@@ -18,17 +18,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "HELLOGUI.h"
 #include <HELLO_version.h>
 
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
+
+#include <SalomeApp_DataObject.h>
+
+#include <LightApp_SelectionMgr.h>
+
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Desktop.h>
-#include <SalomeApp_Application.h>
 
 #include <SALOME_LifeCycleCORBA.hxx>
+
+#include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_InteractiveObject.hxx>
 
 // QT Includes
 #include <QInputDialog>
@@ -513,6 +522,166 @@ void HELLOGUI::paste()
 }
 
 /*!
+  \brief Check if the module allows "drag" operation of its objects.
+
+  Overloaded from LightApp_Module class.
+  
+  This function is a part of the general drag-n-drop mechanism.
+
+  \return true if module allows dragging the given object
+*/
+bool HELLOGUI::isDragable(const SUIT_DataObject* what) const
+{
+  // allow to drag any HELLO object, except the component
+  const SalomeApp_ModuleObject* aModObj = dynamic_cast<const SalomeApp_ModuleObject*>(what);
+  if (aModObj)
+    return false;
+  return true;
+  // TODO: drag-move or drag-copy?
+}
+
+/*!
+  \brief Check if the module allows "drop" operation on the given objects.
+
+  Overloaded from LightApp_Module class.
+
+  This function is a part of the general drag-n-drop mechanism.
+
+  \return true if module allows dropping the object "what" on the object "where"
+*/
+bool HELLOGUI::isDropAccepted(const SUIT_DataObject* where) const
+{
+  /*
+  LightApp_SelectionMgr* aSelMgr = getApp()->selectionMgr();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
+  const SalomeApp_DataObject* aDataObj = dynamic_cast<const SalomeApp_DataObject*>(where);
+
+  if (!aSelMgr || !appStudy || !aDataObj) return false;
+
+  // get the <what> directly from selection
+  SALOME_ListIO selected;
+  // this call leads to infinite loop and crash
+  aSelMgr->selectedObjects(selected, "ObjectBrowser", false);
+
+  // check if study is locked
+  _PTR(Study) aStudyDS = appStudy->studyDS();
+  if (_PTR(AttributeStudyProperties)(aStudyDS->GetProperties())->IsLocked())
+    return false;
+
+  // get HELLO component
+  _PTR(SObject) aSObj = aDataObj->object();
+  _PTR(SComponent) helloComp = aSObj->GetFatherComponent();
+
+  // check parent component of each selected object
+  SALOME_ListIteratorOfListIO It (selected);
+  for (; It.More(); It.Next()) {
+    Handle(SALOME_InteractiveObject)& anIObject = It.Value();
+    if (!anIObject->hasEntry()) continue;
+
+    QString entry = anIObject->getEntry();
+    _PTR(SObject) obj = aStudyDS->FindObjectID(entry.toLatin1().data());
+    _PTR(SComponent) aComp = obj->GetFatherComponent();
+
+    if (aComp->GetID() != helloComp->GetID()) return false;
+  }
+  */
+  return true;
+}
+
+/*!
+  \brief Try to move/copy given objects into the place, defined by parent and row.
+
+  Overloaded from LightApp_Module class.
+
+  This function is a part of the general drag-n-drop mechanism.
+*/
+void HELLOGUI::dropObjects(const DataObjectList& what, Qt::DropAction action,
+                           const SUIT_DataObject* parent, const int row)
+{
+  // process <action> argument to copy/move objects
+  if (action != Qt::CopyAction && action != Qt::MoveAction)
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
+  if (appStudy) {
+    _PTR(Study) aStudyDS = appStudy->studyDS();
+    if (aStudyDS) {
+      _PTR(UseCaseBuilder) aUseCaseBuilder = aStudyDS->GetUseCaseBuilder();
+      _PTR(SComponent) aFatherComp = aStudyDS->FindComponent("HELLO");
+      if (aFatherComp) {
+        // 1. Build tree nodes tree, if it is absent
+        // NOTE: this must be done on KERNEL level (TODO)?
+        /*
+        aUseCaseBuilder->SetRootCurrent();
+        _PTR(SObject) aRootObj = aUseCaseBuilder->GetCurrentObject();
+        if (!aUseCaseBuilder->HasChildren(aRootObj)) {
+          aUseCaseBuilder->Append(aFatherComp);
+
+          _PTR(ChildIterator) anIter = aStudyDS->NewChildIterator(aFatherComp);
+          for (; anIter->More(); anIter->Next()) {
+            aUseCaseBuilder->AppendTo(aFatherComp, anIter->Value());
+            // TODO: recursive append of children
+          }
+        }
+        */
+
+        const SalomeApp_DataObject* parentDataObj = dynamic_cast<const SalomeApp_DataObject*>(parent);
+        _PTR(SObject) parentObj = parentDataObj->object();
+
+        _PTR(SObject) anObjAfter;
+        if (row > -1) { // insert at given row
+          if (aUseCaseBuilder->HasChildren(parentObj)) {
+            _PTR(UseCaseIterator) anIter = aUseCaseBuilder->GetUseCaseIterator(parentObj);
+            int i;
+            for (i = 0; i < row && anIter->More(); i++, anIter->Next()) ;
+            if (i == row && anIter->More()) {
+              anObjAfter = anIter->Value();
+            }
+          }
+        }
+
+        // 2. Copy/Move objects
+        QListIterator<SUIT_DataObject*> aWhatIter (what);
+        while (aWhatIter.hasNext()) {
+          SalomeApp_DataObject* aDataObji = dynamic_cast<SalomeApp_DataObject*>(aWhatIter.next());
+          _PTR(SObject) anObji = aDataObji->object();
+          if (action == Qt::MoveAction) {
+            // Remove from old place (move action)
+            aUseCaseBuilder->Remove(anObji);
+          }
+          else { // action == Qt::CopyAction
+            // Get object's data to create a copy
+            _PTR(StudyBuilder) aStudyBuilder = aStudyDS->NewBuilder();
+            _PTR(GenericAttribute) anAttr;
+            anAttr = aStudyBuilder->FindOrCreateAttribute(anObji, "AttributeName");
+            _PTR(AttributeName) aSourceName (anAttr);
+
+            // Create a new SObject (copy action)
+            _PTR(SObject) aCopySO (aStudyBuilder->NewObject(aFatherComp));
+            anAttr = aStudyBuilder->FindOrCreateAttribute(aCopySO, "AttributeName");
+            _PTR(AttributeName) aTargetName (anAttr);
+            aTargetName->SetValue(aSourceName->Value());
+
+            anObji = aCopySO; // ??
+          }
+
+          // Insert the object or its copy in the new position
+          if (anObjAfter) {
+            // insert at row
+            aUseCaseBuilder->InsertBefore(anObji, anObjAfter);
+          }
+          else {
+            // append
+            aUseCaseBuilder->AppendTo(parentObj, anObji);
+          }
+        }
+        getApp()->updateObjectBrowser(false);
+      }
+    }
+  }
+}
+
+/*!
   \brief Module activation.
   
   Overloaded from CAM_Module class.
@@ -536,6 +705,10 @@ bool HELLOGUI::activateModule( SUIT_Study* theStudy )
   setMenuShown( true );
   // show own toolbars
   setToolShown( true );
+
+  // tune the object browser (example of drag-and-drop usage)
+  // TODO
+  // save current state?
 
   // return the activation status
   return bOk;
@@ -562,6 +735,10 @@ bool HELLOGUI::deactivateModule( SUIT_Study* theStudy )
   setMenuShown( false );
   // hide own toolbars
   setToolShown( false );
+
+  // tune the object browser (example of drag-and-drop usage)
+  // TODO
+  // restore saved state?
 
   // call parent implementation and return the activation status
   return SalomeApp_Module::deactivateModule( theStudy );
@@ -617,9 +794,62 @@ void HELLOGUI::OnGetBanner()
 
   if ( ok && !myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
   {
-    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen( getApp() );
+    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen(getApp());
     QString banner = hellogen->makeBanner( (const char*)myName.toLatin1() );
-    SUIT_MessageBox::information( getApp()->desktop(), tr( "INF_HELLO_BANNER" ), banner, tr( "BUT_OK" ) );
+    SUIT_MessageBox::information(getApp()->desktop(), tr("INF_HELLO_BANNER"), banner, tr("BUT_OK"));
+
+    SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+    CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
+    SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
+    if (appStudy) {
+      _PTR(Study) aStudyDS = appStudy->studyDS();
+      int aStudyID = aStudyDS->StudyId();
+      SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
+
+      hellogen->createObject(aDSStudy, banner.toAscii().constData());
+      //getApp()->updateObjectBrowser(false);
+      getApp()->updateObjectBrowser(true);
+    }
+
+    // ?tmp?: publish in study
+    // TODO
+    /*
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
+    if (appStudy) {
+      _PTR(Study) aStudyDS = appStudy->studyDS();
+      if (aStudyDS) {
+        _PTR(GenericAttribute) anAttr;
+        _PTR(StudyBuilder) aStudyBuilder = aStudyDS->NewBuilder();
+        _PTR(SComponent) aFather = aStudyDS->FindComponent("HELLO");
+        if (!aFather) {
+          // Create SComponent
+          aFather = aStudyBuilder->NewComponent("HELLO");
+          anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
+          _PTR(AttributeName) aName (anAttr);
+          aName->SetValue("Hellos");
+          //anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributePixMap");
+          //_PTR(AttributePixMap) aPixMap (anAttr);
+          //aPixMap->SetPixMap("ICON_GET_BANNER");
+          CORBA::String_var aCompIOR = getApp()->orb()->object_to_string(hellogen);
+          aStudyBuilder->DefineComponentInstance(aFather, aCompIOR.in());
+        }
+        if (aFather) {
+          // Create SObject
+          _PTR(SObject) aResultSO (aStudyBuilder->NewObject(aFather));
+          anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
+          _PTR(AttributeName) aName (anAttr);
+          aName->SetValue(banner.toAscii().constData());
+
+          //anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeLocalID");
+          //_PTR(AttributeLocalID) aLocID (anAttr);
+          //aLocID->SetValue(1020);
+
+          getApp()->updateObjectBrowser(false);
+        }
+      }
+    }
+    */
   }
 }
 

@@ -18,10 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef __HELLO_GEN__
 #define __HELLO_GEN__
+
 /*!
  \defgroup EXAMPLES SALOME EXAMPLES components
  */
@@ -41,13 +41,16 @@ module HELLO_ORB
    */
   interface HELLO_Gen : Engines::EngineComponent
   {
-     /*!
-         Set the Name and return the string concatenation of "hello, " and the given name.
-      */
-     string makeBanner(in string name)
-         raises (SALOME::SALOME_Exception);
+    /*!
+      Set the Name and return the string concatenation of "hello, " and the given name.
+    */
+    string makeBanner(in string name)
+      raises (SALOME::SALOME_Exception);
+
+    void createObject(in SALOMEDS::Study theStudy,
+		      in string name)
+      raises (SALOME::SALOME_Exception);
   };
 };
 
 #endif
-

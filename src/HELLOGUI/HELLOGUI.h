@@ -18,10 +18,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  HELLOGUI : HELLO component GUI implemetation 
-//
+//  HELLOGUI : HELLO component GUI implemetation
 
 #ifndef _HELLOGUI_H_
 #define _HELLOGUI_H_
@@ -67,6 +65,10 @@ public:
 
   virtual bool                canCopy() const;
   virtual bool                canPaste() const;
+  virtual bool                isDragable(const SUIT_DataObject* what) const;
+  virtual bool                isDropAccepted(const SUIT_DataObject* where) const;
+  virtual void                dropObjects(const DataObjectList& what, Qt::DropAction action,
+                                          const SUIT_DataObject* parent, const int row);
   virtual void                copy();
   virtual void                paste();
 

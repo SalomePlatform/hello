@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _HELLO_HXX_
 #define _HELLO_HXX_
@@ -34,16 +33,18 @@ class HELLO:
 
 public:
     HELLO(CORBA::ORB_ptr orb,
-	    PortableServer::POA_ptr poa,
-	    PortableServer::ObjectId * contId, 
-	    const char *instanceName, 
-	    const char *interfaceName);
+          PortableServer::POA_ptr poa,
+          PortableServer::ObjectId * contId, 
+          const char *instanceName, 
+          const char *interfaceName);
     virtual ~HELLO();
 
     //
 
     char* makeBanner(const char* name);
 
+    void createObject(SALOMEDS::Study_ptr theStudy,
+		      const char* theName) throw (SALOME::SALOME_Exception);
 };
 
 extern "C"
