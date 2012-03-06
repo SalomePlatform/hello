@@ -24,36 +24,32 @@
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(HELLO_Gen)
-#include "SALOME_Component_i.hxx"
+#include <SALOME_Component_i.hxx>
 
 class HELLO:
   public POA_HELLO_ORB::HELLO_Gen,
   public Engines_Component_i 
 {
-
 public:
-    HELLO(CORBA::ORB_ptr orb,
-          PortableServer::POA_ptr poa,
-          PortableServer::ObjectId * contId, 
-          const char *instanceName, 
-          const char *interfaceName);
-    virtual ~HELLO();
+  HELLO( CORBA::ORB_ptr orb,
+	 PortableServer::POA_ptr poa,
+	 PortableServer::ObjectId* contId, 
+	 const char* instanceName, 
+	 const char* interfaceName );
+  virtual ~HELLO();
 
-    //
-
-    char* makeBanner(const char* name);
-
-    void createObject(SALOMEDS::Study_ptr theStudy,
-		      const char* theName) throw (SALOME::SALOME_Exception);
+  HELLO_ORB::status hello  ( SALOMEDS::Study_ptr study, const char* name );
+  HELLO_ORB::status goodbye( SALOMEDS::Study_ptr study, const char* name );
+  void              copyOrMove( const HELLO_ORB::object_list& what,
+				SALOMEDS::SObject_ptr where,
+				CORBA::Long row, CORBA::Boolean isCopy );
 };
 
 extern "C"
-    PortableServer::ObjectId * HELLOEngine_factory(
-	    CORBA::ORB_ptr orb,
-	    PortableServer::POA_ptr poa,
-	    PortableServer::ObjectId * contId,
-	    const char *instanceName,
-	    const char *interfaceName);
-
+PortableServer::ObjectId* HELLOEngine_factory( CORBA::ORB_ptr orb,
+					       PortableServer::POA_ptr poa,
+					       PortableServer::ObjectId* contId,
+					       const char* instanceName,
+					       const char* interfaceName );
 
 #endif

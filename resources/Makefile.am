@@ -23,7 +23,9 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 dist_salomeres_DATA = \
 HELLO.png \
-ExecHELLO.png
+handshake.png \
+goodbye.png \
+testme.png
 
 # VSR: little trick to avoid putting if HELLOCatalog.xml to the distribution archive
 nodist_salomeres_SCRIPTS = HELLOCatalog.xml SalomeApp.xml
