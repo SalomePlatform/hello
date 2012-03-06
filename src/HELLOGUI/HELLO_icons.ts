@@ -4,8 +4,20 @@
     <context>
         <name>@default</name>
         <message>
-            <source>ICON_GET_BANNER</source>
-            <translation>ExecHELLO.png</translation>
+            <source>ICON_HELLO</source>
+            <translation>HELLO.png</translation>
+        </message>
+        <message>
+            <source>ICON_OP_HELLO</source>
+            <translation>handshake.png</translation>
+        </message>
+        <message>
+            <source>ICON_OP_GOODBYE</source>
+            <translation>goodbye.png</translation>
+        </message>
+        <message>
+            <source>ICON_OP_TESTME</source>
+            <translation>testme.png</translation>
         </message>
     </context>
 </TS>

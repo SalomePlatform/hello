@@ -20,11 +20,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
 #include "HELLOGUI.h"
-#include <HELLO_version.h>
+#include "HELLO_version.h"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-
 #include <SalomeApp_DataObject.h>
 
 #include <LightApp_SelectionMgr.h>
@@ -33,20 +32,24 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Desktop.h>
 
-#include <SALOME_LifeCycleCORBA.hxx>
+#include <QtxPopupMgr.h>
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
-#include <SALOME_InteractiveObject.hxx>
 
-// QT Includes
+#include <SALOME_LifeCycleCORBA.hxx>
+#include <SALOMEDS_SObject.hxx>
+#include <SALOMEDS_Study.hxx>
+
 #include <QInputDialog>
-#include <QIcon>
+
+//! The only instance of the reference to engine
+HELLO_ORB::HELLO_Gen_var HELLOGUI::myEngine;
 
 /*!
   \brief Constructor
   
   Creates an instance of the HELLO GUI module.
+  Initializes (loads if necessary) HELLO module engine.
 
   \note Since SalomeApp_Module uses virtual inheritance 
   from LightApp_Module class, it's necessary to call both
@@ -57,6 +60,7 @@ HELLOGUI::HELLOGUI() :
   SalomeApp_Module( "HELLO" ), // module name
   LightApp_Module( "HELLO" )   // module name
 {
+  init(); // internal initialization
 }
 
 /*!
@@ -70,20 +74,20 @@ HELLOGUI::~HELLOGUI()
 }
 
 /*!
-  \brief Gets an reference to the HELLO module CORBA engine
+  \brief Get a reference to the HELLO module CORBA engine
 
-  Returns the reference to the HELLO engine, loading it to the C++ container
-  (FactoryServer by default) if necessary.
+  \note This function returns vartype in order to minimize possible crashes
+  when using this function with assignment operations.
+  On the other hand, this simplifies usage of this function when using it outside
+  the assignment operations, to minimize memory leaks caused by orphan CORBA
+  references (no need to take care of reference counting).
 
-  \param app pointer to the current application instance
   \return reference to the module engine
 */
-HELLO_ORB::HELLO_Gen_ptr HELLOGUI::InitHELLOGen( SalomeApp_Application* app )
+HELLO_ORB::HELLO_Gen_var HELLOGUI::engine()
 {
-  Engines::EngineComponent_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HELLO" );
-  HELLO_ORB::HELLO_Gen_ptr clr = HELLO_ORB::HELLO_Gen::_narrow(comp);
-  ASSERT(!CORBA::is_nil(clr));
-  return clr;
+  init(); // initialize engine, if necessary
+  return myEngine;
 }
 
 /*!
@@ -107,33 +111,73 @@ void HELLOGUI::initialize( CAM_Application* app )
   // call the parent implementation
   SalomeApp_Module::initialize( app );
 
-  // load HELLO module engine, if necessary
-  HELLO_ORB::HELLO_Gen_var engine = InitHELLOGen( dynamic_cast<SalomeApp_Application*>( app ) );
-
-  // get reference to the desktop and resources manager
-  QWidget* aDesktop = application()->desktop();
-  SUIT_ResourceMgr* aResourceMgr = app->resourceMgr();
+  // get reference to the desktop (used as a parent for actions)
+  QWidget* dsk = app->desktop();
+  // get resources manager
+  SUIT_ResourceMgr* resMgr = app->resourceMgr();
 
   // create actions
-  createAction( 190, tr( "TLT_MY_NEW_ITEM" ), QIcon(), tr( "MEN_MY_NEW_ITEM" ), tr( "STS_MY_NEW_ITEM" ), 0, aDesktop, false,
-		this, SLOT( OnMyNewItem() ) );
-  QPixmap aPixmap = aResourceMgr->loadPixmap( "HELLO",tr( "ICON_GET_BANNER" ) );
-  createAction( 901, tr( "TLT_GET_BANNER" ), QIcon( aPixmap ), tr( "MEN_GET_BANNER" ), tr( "STS_GET_BANNER" ), 0, aDesktop, false,
-		this, SLOT( OnGetBanner() ) );
+  // ... Test me operation
+  createAction( OpTestMe,                                               // operation id
+		tr( "TLT_OP_TESTME" ),                                  // tooltip
+		resMgr->loadPixmap( "HELLO",tr( "ICON_OP_TESTME" ) ),   // icon
+		tr( "MEN_OP_TESTME" ),                                  // menu title
+		tr( "STS_OP_TESTME" ),                                  // status tip
+		0,                                                      // accelerator (not set)
+		dsk,                                                    // parent
+		false,                                                  // togglable flag (no)
+		this,                                                   // action receiver
+		SLOT( testMe() ) );                                     // action slot
+  // ... Hello operation
+  createAction( OpHello,                                                // operation id
+		tr( "TLT_OP_HELLO" ),                                   // tooltip
+		resMgr->loadPixmap( "HELLO",tr( "ICON_OP_HELLO" ) ),    // icon
+		tr( "MEN_OP_HELLO" ),                                   // menu title
+		tr( "STS_OP_HELLO" ),                                   // status tip
+		0,                                                      // accelerator (not set)
+		dsk,                                                    // parent
+		false,                                                  // togglable flag (no)
+		this,                                                   // action receiver
+		SLOT( hello() ) );                                      // action slot
+  // ... Goodbye operation
+  createAction( OpGoodbye,                                              // operation id
+		tr( "TLT_OP_GOODBYE" ),                                 // tooltip
+		resMgr->loadPixmap( "HELLO",tr( "ICON_OP_GOODBYE" ) ),  // icon
+		tr( "MEN_OP_GOODBYE" ),                                 // menu title
+		tr( "STS_OP_GOODBYE" ),                                 // status tip
+		0,                                                      // accelerator (not set)
+		dsk,                                                    // parent
+		false,                                                  // togglable flag (no)
+		this,                                                   // action receiver
+		SLOT( goodbye() ) );                                    // action slot
 
   // create menus
-  int aMenuId;
-  aMenuId = createMenu( tr( "MEN_FILE" ), -1, -1 );
-  createMenu( separator(), aMenuId, -1, 10 );
-  aMenuId = createMenu( tr( "MEN_FILE_HELLO" ), aMenuId, -1, 10 );
-  createMenu( 190, aMenuId );
-
-  aMenuId = createMenu( tr( "MEN_HELLO" ), -1, -1, 30 );
-  createMenu( 901, aMenuId, 10 );
+  int menuId;
+  menuId = createMenu( tr( "MEN_FILE" ), -1, -1 );                      // File menu
+  createMenu( separator(), menuId, -1, 10 );                            // add separator to File menu
+  menuId = createMenu( tr( "MEN_FILE_HELLO" ), menuId, -1, 10 );        // File - Hello submenu
+  createMenu( OpTestMe, menuId );                                       // File - Hello - Test me
+  menuId = createMenu( tr( "MEN_HELLO" ), -1, -1, 30 );                 // Hello menu
+  createMenu( OpHello, menuId, 10 );                                    // Hello - Hello
+  createMenu( OpGoodbye, menuId, 10 );                                  // Hello - Goodbye
 
   // create toolbars
-  int aToolId = createTool ( tr( "TOOL_HELLO" ) );
-  createTool( 901, aToolId );
+  int aToolId;
+  aToolId = createTool ( tr( "TOOL_TEST" ) );                           // Test toolbar
+  createTool( OpTestMe, aToolId );                                      // Test - Test me
+  aToolId = createTool ( tr( "TOOL_HELLO" ) );                          // Hello toolbar
+  createTool( OpHello, aToolId );                                       // Hello - Hello
+  createTool( OpGoodbye, aToolId );                                     // Hello - Goodbye
+
+  // set-up popup menu
+  QtxPopupMgr* mgr = popupMgr();
+  mgr->insert( action( OpHello ),   -1, -1 );                           // Helo
+  mgr->insert( action( OpGoodbye ), -1, -1 );                           // Goodbye
+  mgr->insert( separator(),         -1, -1 );                           // -----------
+  mgr->insert( action( OpTestMe ),  -1, -1 );                           // Test me
+  QString baseRule = "client='ObjectBrowser' and selcount=1 and $component={'HELLO'}";
+  mgr->setRule( action( OpHello ),   baseRule + " and isComponent",  QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( OpGoodbye ), baseRule + " and !isComponent", QtxPopupMgr::VisibleRule );
 }
 
 /*!
@@ -141,13 +185,12 @@ void HELLOGUI::initialize( CAM_Application* app )
 
   Overloaded from SalomeApp_Module class.
 
-  Returns the reference to the module engine, loading it if necessary.
- 
-  \return string containing module engine IOR
+  \return string representing module engine IOR
 */
 QString HELLOGUI::engineIOR() const
 {
-  CORBA::String_var anIOR = getApp()->orb()->object_to_string( InitHELLOGen( getApp() ) );
+  init(); // initialize engine, if necessary
+  CORBA::String_var anIOR = getApp()->orb()->object_to_string( myEngine.in() );
   return QString( anIOR.in() );
 }
 
@@ -156,13 +199,14 @@ QString HELLOGUI::engineIOR() const
 
   Overloaded from CAM_Module class.
 
-  Load and return the module icon pixmap. This icon is shown, for example,
-  in the Object browser.
+  Load and return the module icon pixmap. This icon is shown
+  in the Object browser, in modules toolbar, etc.
 
   Default implementation uses iconName() function to retrieve the name
-  of the image file to be used as the module icon and tries to load this
-  file and create pixmap from it.
+  of the image file to be used as the module icon; tries to load this
+  file from module's resources and create pixmap from it.
   Returns valid QPixmap instance if image is loaded correctly.
+  This function can be customized to provide another way to get module icon.
 
   \return module icon pixmap
   \sa iconName()
@@ -174,7 +218,7 @@ QPixmap HELLOGUI::moduleIcon() const
 }
 
 /*!
-  \brief Get module icon's name.
+  \brief Get module icon's file name.
 
   Overloaded from CAM_Module class.
 
@@ -183,6 +227,8 @@ QPixmap HELLOGUI::moduleIcon() const
   icon file from the application using moduleIcon() function, which
   in its turn retrieves the information about the module icon
   from the configuration file (e.g. SalomeApp.xml, LightApp.xml).
+  This function can be customized to provide another way to get module icon's
+  file name.
 
   \return module icon file name
   \sa moduleIcon()
@@ -194,7 +240,7 @@ QString HELLOGUI::iconName() const
 }
 
 /*!
-  \brief Get compatible dockable windows.
+  \brief Request dockable windows to be available when module is active.
 
   Overloaded from LightApp_Module class.
 
@@ -212,20 +258,24 @@ QString HELLOGUI::iconName() const
 */
 void HELLOGUI::windows( QMap<int, int>& theMap ) const
 {
-  theMap.clear();
-  theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
-  theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::BottomDockWidgetArea );
+  // want Object browser, in the left area
+  theMap.insert( SalomeApp_Application::WT_ObjectBrowser,
+		 Qt::LeftDockWidgetArea );
+  // want Python console, in the bottom area
+  theMap.insert( SalomeApp_Application::WT_PyConsole,
+		 Qt::BottomDockWidgetArea );
 }
 
 /*!
-  \brief Get compatible view windows types.
+  \brief Request view windows (types) to be activated when module is activated..
 
   Overloaded from LightApp_Module class.
 
   Fills and returns the list of 3D/2D view windows types compatible
-  with this module. The views of the specified types will be automatically
-  activated (raised to the top of view stack) or created (if necessary)
-  each time when the module is activated by the user.
+  with this module. The views of the specified type(s) will be automatically
+  activated (raised to the top of view stack) each time when the module
+  is activated by the user (the views will be automatically created if they
+  do not exist at the module activation).
   Empty list means no compatible view windows for the module.
 
   Example:
@@ -284,6 +334,7 @@ void HELLOGUI::viewManagers( QStringList& /*theList*/ ) const
 LightApp_Selection* HELLOGUI::createSelection() const
 {
   // nothing to do, in this example just call the parent implementation
+  // see also initialize()
   return SalomeApp_Module::createSelection();
 }
 
@@ -332,6 +383,7 @@ LightApp_Displayer* HELLOGUI::displayer()
 void HELLOGUI::contextMenuPopup( const QString& type, QMenu* menu, QString& title )
 {
   // nothing to do, in this example just call the parent implementation
+  // see also initialize()
   return SalomeApp_Module::contextMenuPopup( type, menu, title );
 }
 
@@ -527,158 +579,92 @@ void HELLOGUI::paste()
   Overloaded from LightApp_Module class.
   
   This function is a part of the general drag-n-drop mechanism.
+  The goal of this function is to check data object passed as a parameter
+  and decide if it can be dragged or no.
 
-  \return true if module allows dragging the given object
+  \param what data object being tested for drag operation
+  \return \c true if module allows dragging of the specified object
+  \sa isDropAccepted(), dropObjects()
 */
-bool HELLOGUI::isDragable(const SUIT_DataObject* what) const
+bool HELLOGUI::isDragable( const SUIT_DataObject* what ) const
 {
-  // allow to drag any HELLO object, except the component
-  const SalomeApp_ModuleObject* aModObj = dynamic_cast<const SalomeApp_ModuleObject*>(what);
-  if (aModObj)
-    return false;
-  return true;
-  // TODO: drag-move or drag-copy?
+  // we allow dragging any HELLO object, except the top-level component
+  const SalomeApp_ModuleObject* aModObj = dynamic_cast<const SalomeApp_ModuleObject*>( what );
+  return ( aModObj == 0 );
 }
 
 /*!
-  \brief Check if the module allows "drop" operation on the given objects.
+  \brief Check if the module allows "drop" operation on the given object.
 
   Overloaded from LightApp_Module class.
 
   This function is a part of the general drag-n-drop mechanism.
+  The goal of this function is to check data object passed as a parameter
+  and decide if it can be used as a target for the "drop" operation.
+  The processing of the drop operation itself is done in the dropObjects() function.
 
-  \return true if module allows dropping the object "what" on the object "where"
+  \param where target data object
+  \return \c true if module supports dropping on the \a where data object
+  \sa isDragable(), dropObjects()
 */
-bool HELLOGUI::isDropAccepted(const SUIT_DataObject* where) const
+bool HELLOGUI::isDropAccepted( const SUIT_DataObject* where ) const
 {
-  /*
-  LightApp_SelectionMgr* aSelMgr = getApp()->selectionMgr();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-  const SalomeApp_DataObject* aDataObj = dynamic_cast<const SalomeApp_DataObject*>(where);
-
-  if (!aSelMgr || !appStudy || !aDataObj) return false;
-
-  // get the <what> directly from selection
-  SALOME_ListIO selected;
-  // this call leads to infinite loop and crash
-  aSelMgr->selectedObjects(selected, "ObjectBrowser", false);
-
-  // check if study is locked
-  _PTR(Study) aStudyDS = appStudy->studyDS();
-  if (_PTR(AttributeStudyProperties)(aStudyDS->GetProperties())->IsLocked())
-    return false;
-
-  // get HELLO component
-  _PTR(SObject) aSObj = aDataObj->object();
-  _PTR(SComponent) helloComp = aSObj->GetFatherComponent();
-
-  // check parent component of each selected object
-  SALOME_ListIteratorOfListIO It (selected);
-  for (; It.More(); It.Next()) {
-    Handle(SALOME_InteractiveObject)& anIObject = It.Value();
-    if (!anIObject->hasEntry()) continue;
-
-    QString entry = anIObject->getEntry();
-    _PTR(SObject) obj = aStudyDS->FindObjectID(entry.toLatin1().data());
-    _PTR(SComponent) aComp = obj->GetFatherComponent();
-
-    if (aComp->GetID() != helloComp->GetID()) return false;
-  }
-  */
+  // we allow dropping of all objects
+  // (temporarily implementation, we also need to check objects being dragged)
   return true;
 }
 
 /*!
-  \brief Try to move/copy given objects into the place, defined by parent and row.
-
+  \brief Complete drag-n-drop operation.
+  
   Overloaded from LightApp_Module class.
 
   This function is a part of the general drag-n-drop mechanism.
+  Its goal is to handle dropping of the objects being dragged according
+  to the chosen operation (copy or move). The dropping is performed in the
+  context of the parent data object \a where and the \a row (position in the 
+  children index) at which the data should be dropped. If \a row is equal to -1,
+  this means that objects are added to the end of the children list.
+
+  \param what objects being dropped
+  \param where target data object
+  \param row child index at which the drop operation is performed
+  \param action drag-n-drop operation (Qt::DropAction) - copy or move
+
+  \sa isDragable(), isDropAccepted()
 */
-void HELLOGUI::dropObjects(const DataObjectList& what, Qt::DropAction action,
-                           const SUIT_DataObject* parent, const int row)
+void HELLOGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* where,
+			    const int row, Qt::DropAction action )
 {
-  // process <action> argument to copy/move objects
   if (action != Qt::CopyAction && action != Qt::MoveAction)
-    return;
+    return; // unsupported action
 
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-  if (appStudy) {
-    _PTR(Study) aStudyDS = appStudy->studyDS();
-    if (aStudyDS) {
-      _PTR(UseCaseBuilder) aUseCaseBuilder = aStudyDS->GetUseCaseBuilder();
-      _PTR(SComponent) aFatherComp = aStudyDS->FindComponent("HELLO");
-      if (aFatherComp) {
-        // 1. Build tree nodes tree, if it is absent
-        // NOTE: this must be done on KERNEL level (TODO)?
-        /*
-        aUseCaseBuilder->SetRootCurrent();
-        _PTR(SObject) aRootObj = aUseCaseBuilder->GetCurrentObject();
-        if (!aUseCaseBuilder->HasChildren(aRootObj)) {
-          aUseCaseBuilder->Append(aFatherComp);
+  // get parent object
+  SalomeApp_DataObject* dataObj = dynamic_cast<SalomeApp_DataObject*>( where );
+  if ( !dataObj ) return; // wrong parent
+  _PTR(SObject) parentObj = dataObj->object();
 
-          _PTR(ChildIterator) anIter = aStudyDS->NewChildIterator(aFatherComp);
-          for (; anIter->More(); anIter->Next()) {
-            aUseCaseBuilder->AppendTo(aFatherComp, anIter->Value());
-            // TODO: recursive append of children
-          }
-        }
-        */
-
-        const SalomeApp_DataObject* parentDataObj = dynamic_cast<const SalomeApp_DataObject*>(parent);
-        _PTR(SObject) parentObj = parentDataObj->object();
-
-        _PTR(SObject) anObjAfter;
-        if (row > -1) { // insert at given row
-          if (aUseCaseBuilder->HasChildren(parentObj)) {
-            _PTR(UseCaseIterator) anIter = aUseCaseBuilder->GetUseCaseIterator(parentObj);
-            int i;
-            for (i = 0; i < row && anIter->More(); i++, anIter->Next()) ;
-            if (i == row && anIter->More()) {
-              anObjAfter = anIter->Value();
-            }
-          }
-        }
-
-        // 2. Copy/Move objects
-        QListIterator<SUIT_DataObject*> aWhatIter (what);
-        while (aWhatIter.hasNext()) {
-          SalomeApp_DataObject* aDataObji = dynamic_cast<SalomeApp_DataObject*>(aWhatIter.next());
-          _PTR(SObject) anObji = aDataObji->object();
-          if (action == Qt::MoveAction) {
-            // Remove from old place (move action)
-            aUseCaseBuilder->Remove(anObji);
-          }
-          else { // action == Qt::CopyAction
-            // Get object's data to create a copy
-            _PTR(StudyBuilder) aStudyBuilder = aStudyDS->NewBuilder();
-            _PTR(GenericAttribute) anAttr;
-            anAttr = aStudyBuilder->FindOrCreateAttribute(anObji, "AttributeName");
-            _PTR(AttributeName) aSourceName (anAttr);
-
-            // Create a new SObject (copy action)
-            _PTR(SObject) aCopySO (aStudyBuilder->NewObject(aFatherComp));
-            anAttr = aStudyBuilder->FindOrCreateAttribute(aCopySO, "AttributeName");
-            _PTR(AttributeName) aTargetName (anAttr);
-            aTargetName->SetValue(aSourceName->Value());
-
-            anObji = aCopySO; // ??
-          }
-
-          // Insert the object or its copy in the new position
-          if (anObjAfter) {
-            // insert at row
-            aUseCaseBuilder->InsertBefore(anObji, anObjAfter);
-          }
-          else {
-            // append
-            aUseCaseBuilder->AppendTo(parentObj, anObji);
-          }
-        }
-        getApp()->updateObjectBrowser(false);
-      }
-    }
+  // collect objects being dropped
+  HELLO_ORB::object_list_var objects = new HELLO_ORB::object_list();
+  objects->length( what.count() );
+  int count = 0;
+  for ( int i = 0; i < what.count(); i++ ) {
+    dataObj = dynamic_cast<SalomeApp_DataObject*>( what[i] );
+    if ( !dataObj ) continue;  // skip wrong objects
+    _PTR(SObject) sobj = dataObj->object();
+    objects[i] = _CAST(SObject, sobj)->GetSObject();
+    count++;
   }
+  objects->length( count );
+
+  // call engine function
+  engine()->copyOrMove( objects.in(),                              // what
+			_CAST(SObject, parentObj)->GetSObject(),   // where
+			row,                                       // row
+			action == Qt::CopyAction );                // isCopy
+
+  // update Object browser
+  getApp()->updateObjectBrowser( false );
 }
 
 /*!
@@ -688,7 +674,7 @@ void HELLOGUI::dropObjects(const DataObjectList& what, Qt::DropAction action,
   
   This function is called each time the module is activated
   by the user. It is usually used to perform any relevant actions,
-  like displaying menus and toolbars, etc.
+  like displaying menus and toolbars, connecting specific signals/slots, etc.
   
   \param theStudy current study object
   \return \c true if activation is completed correctly or \c false
@@ -706,10 +692,6 @@ bool HELLOGUI::activateModule( SUIT_Study* theStudy )
   // show own toolbars
   setToolShown( true );
 
-  // tune the object browser (example of drag-and-drop usage)
-  // TODO
-  // save current state?
-
   // return the activation status
   return bOk;
 }
@@ -721,7 +703,7 @@ bool HELLOGUI::activateModule( SUIT_Study* theStudy )
   
   This function is called each time the module is deactivated
   by the user. It is usually used to perform any relevant actions,
-  like hiding menus and toolbars, etc.
+  like hiding menus and toolbars, disconnecting specific signals/slots, etc.
   
   \param theStudy current study object
   \return \c true if deactivation is completed correctly or \c false
@@ -735,10 +717,6 @@ bool HELLOGUI::deactivateModule( SUIT_Study* theStudy )
   setMenuShown( false );
   // hide own toolbars
   setToolShown( false );
-
-  // tune the object browser (example of drag-and-drop usage)
-  // TODO
-  // restore saved state?
 
   // call parent implementation and return the activation status
   return SalomeApp_Module::deactivateModule( theStudy );
@@ -775,93 +753,157 @@ LightApp_Operation* HELLOGUI::createOperation( const int id ) const
 }
 
 /*!
-  \brief Sample menu item action slot
+  \brief Action slot: Test me
 */
-void HELLOGUI::OnMyNewItem()
+void HELLOGUI::testMe()
 {
-  SUIT_MessageBox::warning( getApp()->desktop(),tr( "INF_HELLO_BANNER" ), tr( "INF_HELLO_MENU" ) );
+  SUIT_MessageBox::information( getApp()->desktop(),
+				tr( "INF_TESTME_TITLE" ),
+				tr( "INF_TESTME_MSG" ),
+				tr( "BUT_OK" ) );
 }
 
 /*!
-  \brief "Show banner" menu item action slot
+  \brief Action slot: Hello
 */
-void HELLOGUI::OnGetBanner()
+void HELLOGUI::hello()
 {
-  // Dialog to get the Name
-  bool ok = FALSE;
-  QString myName = QInputDialog::getText( getApp()->desktop(), tr( "QUE_HELLO_LABEL" ), tr( "QUE_HELLO_NAME" ),
-					  QLineEdit::Normal, QString::null, &ok );
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  _PTR(Study) studyDS = study->studyDS();
 
-  if ( ok && !myName.isEmpty()) // if we got a name, get a HELLO component and ask for makeBanner
-  {
-    HELLO_ORB::HELLO_Gen_ptr hellogen = HELLOGUI::InitHELLOGen(getApp());
-    QString banner = hellogen->makeBanner( (const char*)myName.toLatin1() );
-    SUIT_MessageBox::information(getApp()->desktop(), tr("INF_HELLO_BANNER"), banner, tr("BUT_OK"));
+  // request user name
+  bool ok;
+  QString name = QInputDialog::getText( getApp()->desktop(), tr( "QUE_HELLO_TITLE" ), tr( "QUE_ENTER_NAME" ),
+					QLineEdit::Normal, QString::null, &ok );
 
-    SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
-    CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
-    SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-    if (appStudy) {
-      _PTR(Study) aStudyDS = appStudy->studyDS();
-      int aStudyID = aStudyDS->StudyId();
-      SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
+  if ( ok && !name.trimmed().isEmpty() ) {
+    // say hello to SALOME
+    HELLO_ORB::status status = engine()->hello( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
 
-      hellogen->createObject(aDSStudy, banner.toAscii().constData());
-      //getApp()->updateObjectBrowser(false);
-      getApp()->updateObjectBrowser(true);
+    // update Object browser
+    getApp()->updateObjectBrowser(true);
+
+    // process operation status
+    switch( status ) {
+    case HELLO_ORB::OP_OK:
+      // everything's OK
+      SUIT_MessageBox::information( getApp()->desktop(),
+				    tr( "INF_HELLO_TITLE" ), 
+				    tr( "INF_HELLO_MSG" ).arg( name ),
+				    tr( "BUT_OK" ) );
+      break;
+    case HELLO_ORB::OP_ERR_ALREADY_MET:
+      // error: already said hello
+      SUIT_MessageBox::warning( getApp()->desktop(),
+				tr( "INF_HELLO_TITLE" ), 
+				tr( "ERR_HELLO_ALREADY_MET" ).arg( name ),
+				tr( "BUT_OK" ) );
+      break;
+    case HELLO_ORB::OP_ERR_UNKNOWN:
+    default:
+      // other errors
+      SUIT_MessageBox::critical( getApp()->desktop(),
+				 tr( "INF_HELLO_TITLE" ), 
+				 tr( "ERR_ERROR" ),
+				 tr( "BUT_OK" ) );
+      break;
     }
+  }
+}
 
-    // ?tmp?: publish in study
-    // TODO
-    /*
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-    if (appStudy) {
-      _PTR(Study) aStudyDS = appStudy->studyDS();
-      if (aStudyDS) {
-        _PTR(GenericAttribute) anAttr;
-        _PTR(StudyBuilder) aStudyBuilder = aStudyDS->NewBuilder();
-        _PTR(SComponent) aFather = aStudyDS->FindComponent("HELLO");
-        if (!aFather) {
-          // Create SComponent
-          aFather = aStudyBuilder->NewComponent("HELLO");
-          anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
-          _PTR(AttributeName) aName (anAttr);
-          aName->SetValue("Hellos");
-          //anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributePixMap");
-          //_PTR(AttributePixMap) aPixMap (anAttr);
-          //aPixMap->SetPixMap("ICON_GET_BANNER");
-          CORBA::String_var aCompIOR = getApp()->orb()->object_to_string(hellogen);
-          aStudyBuilder->DefineComponentInstance(aFather, aCompIOR.in());
-        }
-        if (aFather) {
-          // Create SObject
-          _PTR(SObject) aResultSO (aStudyBuilder->NewObject(aFather));
-          anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
-          _PTR(AttributeName) aName (anAttr);
-          aName->SetValue(banner.toAscii().constData());
+/*!
+  \brief Action slot: Goodbye
+*/
+void HELLOGUI::goodbye()
+{
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( application() );
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  _PTR(Study) studyDS = study->studyDS();
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
 
-          //anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeLocalID");
-          //_PTR(AttributeLocalID) aLocID (anAttr);
-          //aLocID->SetValue(1020);
+  QString name;
 
-          getApp()->updateObjectBrowser(false);
-        }
+  // get selection
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) io = selected.First();
+    _PTR(SObject) so = studyDS->FindObjectID( io->getEntry() );
+    if ( so ) { 
+      _PTR(SComponent) comp = so->GetFatherComponent();
+      if ( comp && comp->ComponentDataType() == "HELLO" && io->getEntry() != comp->GetID() ) {
+	name = so->GetName().c_str();
       }
     }
-    */
+  }
+
+  // request user name if not specified
+  if ( name.isEmpty() ) {
+    bool ok;
+    name = QInputDialog::getText( getApp()->desktop(), tr( "QUE_GOODBYE_TITLE" ), tr( "QUE_ENTER_NAME" ),
+				  QLineEdit::Normal, QString::null, &ok );
+  }
+
+  if ( !name.trimmed().isEmpty() ) {
+    // say goodby to SALOME
+    HELLO_ORB::status status = engine()->goodbye( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
+
+    // update Object browser
+    getApp()->updateObjectBrowser(true);
+
+    // process operation status
+    switch( status ) {
+    case HELLO_ORB::OP_OK:
+      // everything's OK
+      SUIT_MessageBox::information( getApp()->desktop(),
+				    tr( "INF_GOODBYE_TITLE" ), 
+				    tr( "INF_GOODBYE_MSG" ).arg( name ),
+				    tr( "BUT_OK" ) );
+      break;
+    case HELLO_ORB::OP_ERR_DID_NOT_MEET:
+      // error: did not say hello yet
+      SUIT_MessageBox::warning( getApp()->desktop(),
+				tr( "INF_GOODBYE_TITLE" ), 
+				tr( "ERR_GOODBYE_DID_NOT_MEET" ).arg( name ),
+				tr( "BUT_OK" ) );
+      break;
+    case HELLO_ORB::OP_ERR_UNKNOWN:
+    default:
+      // other errors
+      SUIT_MessageBox::critical( getApp()->desktop(),
+				 tr( "INF_GOODBYE_TITLE" ), 
+				 tr( "ERR_ERROR" ),
+				 tr( "BUT_OK" ) );
+      break;
+    }
+  }
+}
+
+/*!
+  \brief Perform internal initialization
+  
+  In particular, this function initializes module engine.
+*/
+void HELLOGUI::init()
+{
+  // initialize HELLO module engine (load, if necessary)
+  if ( CORBA::is_nil( myEngine ) ) {
+    Engines::EngineComponent_var comp =
+    SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "HELLO" );
+    myEngine = HELLO_ORB::HELLO_Gen::_narrow( comp );
   }
 }
 
 // Export the module
 extern "C" {
+  // FACTORY FUNCTION: create an instance of the Hello module GUI
   CAM_Module* createModule()
   {
     return new HELLOGUI();
   }
-  
+  // VERSIONING FUNCTION: get Hello module's version identifier
   char* getModuleVersion() 
   {
-    return (char*)HELLO_VERSION_STR;
+    return (char*)HELLO_VERSION_STR; // HELLO_VERSION_STR is defined in HELLO_version.h
   }
 }

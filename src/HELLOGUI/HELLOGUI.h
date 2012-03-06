@@ -35,53 +35,68 @@ class HELLOGUI: public SalomeApp_Module
 {
   Q_OBJECT
 
+  //! operations
+  enum { 
+    OpTestMe  = 190,   //!< Test me
+    OpHello   = 901,   //!< Hello
+    OpGoodbye = 902,   //!< Goodbye
+  };
+
 public:
   HELLOGUI();
   ~HELLOGUI();
 
-  static HELLO_ORB::HELLO_Gen_ptr InitHELLOGen( SalomeApp_Application* app );
+  static HELLO_ORB::HELLO_Gen_var engine();
 
-  virtual void                initialize( CAM_Application* app );
-  virtual QString             engineIOR() const;
+  virtual void                    initialize( CAM_Application* app );
+  virtual QString                 engineIOR() const;
 
-  virtual QPixmap             moduleIcon() const;
-  virtual QString             iconName() const;
+  virtual QPixmap                 moduleIcon() const;
+  virtual QString                 iconName() const;
 
-  virtual void                windows( QMap<int, int>& theMap ) const;
-  virtual void                viewManagers( QStringList& theList ) const;
+  virtual void                    windows( QMap<int, int>& theMap ) const;
+  virtual void                    viewManagers( QStringList& theList ) const;
 
-  virtual LightApp_Selection* createSelection() const;
-  virtual LightApp_Displayer* displayer();
+  virtual LightApp_Selection*     createSelection() const;
+  virtual LightApp_Displayer*     displayer();
 
-  virtual void                contextMenuPopup( const QString& type, QMenu* menu, QString& title );
+  virtual void                    contextMenuPopup( const QString& type, QMenu* menu, QString& title );
 
-  virtual void                createPreferences();
-  virtual void                preferencesChanged( const QString& section, const QString& parameter );
+  virtual void                    createPreferences();
+  virtual void                    preferencesChanged( const QString& section, const QString& parameter );
 
-  virtual void                storeVisualParameters( int savePoint );
-  virtual void                restoreVisualParameters( int savePoint );
+  virtual void                    storeVisualParameters( int savePoint );
+  virtual void                    restoreVisualParameters( int savePoint );
 
-  virtual void                studyActivated();
+  virtual void                    studyActivated();
 
-  virtual bool                canCopy() const;
-  virtual bool                canPaste() const;
-  virtual bool                isDragable(const SUIT_DataObject* what) const;
-  virtual bool                isDropAccepted(const SUIT_DataObject* where) const;
-  virtual void                dropObjects(const DataObjectList& what, Qt::DropAction action,
-                                          const SUIT_DataObject* parent, const int row);
-  virtual void                copy();
-  virtual void                paste();
+  virtual bool                    canCopy() const;
+  virtual bool                    canPaste() const;
+  virtual void                    copy();
+  virtual void                    paste();
+
+  virtual bool                    isDragable( const SUIT_DataObject* what ) const;
+  virtual bool                    isDropAccepted( const SUIT_DataObject* where ) const;
+  virtual void                    dropObjects( const DataObjectList& what, SUIT_DataObject* where,
+					       const int row, Qt::DropAction action );
 
 public slots:
-  virtual bool                activateModule( SUIT_Study* theStudy );
-  virtual bool                deactivateModule( SUIT_Study* theStudy );
+  virtual bool                    activateModule( SUIT_Study* theStudy );
+  virtual bool                    deactivateModule( SUIT_Study* theStudy );
 
 protected:
-  virtual LightApp_Operation* createOperation( const int id ) const;
+  virtual LightApp_Operation*     createOperation( const int id ) const;
 
 protected slots:
-  void                        OnMyNewItem();
-  void                        OnGetBanner();
+  void                            testMe();
+  void                            hello();
+  void                            goodbye();
+
+private:
+  static void                     init();
+
+private:
+  static HELLO_ORB::HELLO_Gen_var myEngine;
 };
 
 #endif // _HELLOGUI_H_
