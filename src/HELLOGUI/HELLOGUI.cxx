@@ -171,7 +171,7 @@ void HELLOGUI::initialize( CAM_Application* app )
 
   // set-up popup menu
   QtxPopupMgr* mgr = popupMgr();
-  mgr->insert( action( OpHello ),   -1, -1 );                           // Helo
+  mgr->insert( action( OpHello ),   -1, -1 );                           // Hello
   mgr->insert( action( OpGoodbye ), -1, -1 );                           // Goodbye
   mgr->insert( separator(),         -1, -1 );                           // -----------
   mgr->insert( action( OpTestMe ),  -1, -1 );                           // Test me
@@ -586,7 +586,7 @@ void HELLOGUI::paste()
   \return \c true if module allows dragging of the specified object
   \sa isDropAccepted(), dropObjects()
 */
-bool HELLOGUI::isDragable( const SUIT_DataObject* what ) const
+bool HELLOGUI::isDraggable( const SUIT_DataObject* what ) const
 {
   // we allow dragging any HELLO object, except the top-level component
   const SalomeApp_ModuleObject* aModObj = dynamic_cast<const SalomeApp_ModuleObject*>( what );
@@ -605,7 +605,7 @@ bool HELLOGUI::isDragable( const SUIT_DataObject* what ) const
 
   \param where target data object
   \return \c true if module supports dropping on the \a where data object
-  \sa isDragable(), dropObjects()
+  \sa isDraggable(), dropObjects()
 */
 bool HELLOGUI::isDropAccepted( const SUIT_DataObject* where ) const
 {
@@ -631,7 +631,7 @@ bool HELLOGUI::isDropAccepted( const SUIT_DataObject* where ) const
   \param row child index at which the drop operation is performed
   \param action drag-n-drop operation (Qt::DropAction) - copy or move
 
-  \sa isDragable(), isDropAccepted()
+  \sa isDraggable(), isDropAccepted()
 */
 void HELLOGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* where,
 			    const int row, Qt::DropAction action )
