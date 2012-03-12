@@ -17,47 +17,47 @@
     </message>
     <message>
         <source>MEN_OP_HELLO</source>
-        <translation type="unfinished">Hello</translation>
+        <translation>Salut</translation>
     </message>
     <message>
         <source>MEN_OP_GOODBYE</source>
-        <translation type="unfinished">Goodbye</translation>
+        <translation>Au revoir</translation>
     </message>
     <message>
         <source>MEN_OP_TESTME</source>
-        <translation type="unfinished">Test me</translation>
+        <translation>Essayez moi</translation>
     </message>
     <message>
         <source>STS_OP_HELLO</source>
-        <translation type="unfinished">Say hello to SALOME</translation>
+        <translation>Saluer SALOME</translation>
     </message>
     <message>
         <source>STS_OP_GOODBYE</source>
-        <translation type="unfinished">Say goodbye to SALOME</translation>
+        <translation>Dire au revoir à SALOME</translation>
     </message>
     <message>
         <source>STS_OP_TESTME</source>
-        <translation type="unfinished">Invoke test menu item</translation>
+        <translation>Test d'une action personnalisée dans le menu</translation>
     </message>
     <message>
         <source>TLT_OP_HELLO</source>
-        <translation type="unfinished">Hi, there!</translation>
+        <translation>Salut à toi !</translation>
     </message>
     <message>
         <source>TLT_OP_GOODBYE</source>
-        <translation type="unfinished">Bye-bye!</translation>
+        <translation>Au revoir !</translation>
     </message>
     <message>
         <source>TLT_OP_TESTME</source>
-        <translation type="unfinished">Test me</translation>
+        <translation>Essayez moi</translation>
     </message>
     <message>
         <source>TOOL_TEST</source>
-        <translation type="unfinished">Test</translation>
+        <translation>Test</translation>
     </message>
     <message>
         <source>TOOL_HELLO</source>
-        <translation type="unfinished">Hello</translation>
+        <translation>Salut</translation>
     </message>
     <message>
         <source>BUT_OK</source>
@@ -65,11 +65,11 @@
     </message>
     <message>
         <source>INF_TESTME_TITLE</source>
-        <translation type="unfinished">HELLO: test me</translation>
+        <translation>HELLO: essayez moi</translation>
     </message>
     <message>
         <source>INF_TESTME_MSG</source>
-        <translation>Ce n&apos;est qu&apos;un test</translation>
+        <translation>Ce n&apos;est qu&apos;un test d'action de menu personnalisée</translation>
     </message>
     <message>
         <source>QUE_ENTER_NAME</source>
@@ -77,39 +77,39 @@
     </message>
     <message>
         <source>QUE_HELLO_TITLE</source>
-        <translation type="unfinished">Say hello to SALOME</translation>
+        <translation>Saluer SALOME</translation>
     </message>
     <message>
         <source>INF_HELLO_TITLE</source>
-        <translation type="unfinished">Hello</translation>
+        <translation>Salut</translation>
     </message>
     <message>
         <source>INF_HELLO_MSG</source>
-        <translation type="unfinished">Hello, %1!</translation>
+        <translation>Salut %1 !</translation>
     </message>
     <message>
         <source>ERR_HELLO_ALREADY_MET</source>
-        <translation type="unfinished">%1, we already met!</translation>
+        <translation>%1, nous nous connaissons déjà !</translation>
     </message>
     <message>
         <source>ERR_ERROR</source>
-        <translation type="unfinished">Unknown error</translation>
+        <translation>Erreur inconnue</translation>
     </message>
     <message>
         <source>QUE_GOODBYE_TITLE</source>
-        <translation type="unfinished">Say goodbye to SALOME</translation>
+        <translation>Dire au revoir à SALOME</translation>
     </message>
     <message>
         <source>INF_GOODBYE_TITLE</source>
-        <translation type="unfinished">Goodbye</translation>
+        <translation>Au revoir</translation>
     </message>
     <message>
         <source>INF_GOODBYE_MSG</source>
-        <translation type="unfinished">Bye-bye, %1!</translation>
+        <translation>Au revoir %1 !</translation>
     </message>
     <message>
         <source>ERR_GOODBYE_DID_NOT_MEET</source>
-        <translation type="unfinished">%1, we did not say hello yet!</translation>
+        <translation>%1, nous ne nous sommes pas encore rencontrés !</translation>
     </message>
 </context>
 </TS>
