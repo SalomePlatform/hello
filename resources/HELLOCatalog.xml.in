@@ -28,7 +28,9 @@
     <!-- Path prefix information -->
     <path-prefix-list></path-prefix-list>
     <!-- Type information -->
-    <type-list></type-list>
+    <type-list>
+      <type name="status" kind="int"/>
+    </type-list>
     <!-- Component list -->
     <component-list>
         <!-- Component -->
@@ -58,7 +60,7 @@
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>study</inParameter-name>
-                                <inParameter-type>SALOMEDS/Study</inParameter-type>
+                                <inParameter-type>Study</inParameter-type>
                                 <inParameter-comment>study</inParameter-comment>
                             </inParameter>
                             <inParameter>
@@ -70,7 +72,7 @@
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>HELLO_ORB/status</outParameter-type>
+                                <outParameter-type>status</outParameter-type>
                                 <outParameter-comment>operation status</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
@@ -85,7 +87,7 @@
                         <inParameter-list>
                             <inParameter>
                                 <inParameter-name>study</inParameter-name>
-                                <inParameter-type>SALOMEDS/Study</inParameter-type>
+                                <inParameter-type>Study</inParameter-type>
                                 <inParameter-comment>study</inParameter-comment>
                             </inParameter>
                             <inParameter>
@@ -97,7 +99,7 @@
                         <outParameter-list>
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
-                                <outParameter-type>HELLO_ORB/status</outParameter-type>
+                                <outParameter-type>status</outParameter-type>
                                 <outParameter-comment>operation status</outParameter-comment>
                             </outParameter>
                         </outParameter-list>
