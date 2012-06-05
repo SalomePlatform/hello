@@ -251,7 +251,7 @@ dialog boxes and other such staff.
 These files provide a description (internationalization) of GUI
 resources of the HELLO module. \c HELLO_msg_en.ts provides an English
 translation of the string resources used in a module (there can be also
-transltation files for other languages, for instance French; these files
+translation files for other languages, for instance French; these files
 are distinguished by the language suffix). \c HELLO_icons.ts
 defines images and icons resources used within the GUI library of
 HELLO module. Please refer to Qt linguist documentation for more
