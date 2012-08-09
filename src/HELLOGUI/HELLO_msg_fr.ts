@@ -1,92 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<!--
-  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-
-  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-
-  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-
--->
-<TS version="1.1" >
-    <context>
-        <name>@default</name>
-        <message>
-            <source>MEN_FILE</source>
-            <translation>&amp;File</translation>
-        </message>
-        <message>
-            <source>MEN_FILE_HELLO</source>
-            <translation>Hello</translation>
-        </message>
-        <message>
-            <source>MEN_GET_BANNER</source>
-            <translation>Get banner</translation>
-        </message>
-        <message>
-            <source>MEN_HELLO</source>
-            <translation>HELLO</translation>
-        </message>
-        <message>
-            <source>MEN_MY_NEW_ITEM</source>
-            <translation>My menu item</translation>
-        </message>
-        <message>
-            <source>STS_GET_BANNER</source>
-            <translation>Get HELLO banner</translation>
-        </message>
-        <message>
-            <source>STS_MY_NEW_ITEM</source>
-            <translation>Call my menu item</translation>
-        </message>
-        <message>
-            <source>TLT_GET_BANNER</source>
-            <translation>Get HELLO banner</translation>
-        </message>
-        <message>
-            <source>TLT_MY_NEW_ITEM</source>
-            <translation>My menu item</translation>
-        </message>
-        <message>
-            <source>TOOL_HELLO</source>
-            <translation>HELLO</translation>
-        </message>
-    </context>
-    <context>
-        <name>HELLOGUI</name>
-        <message>
-            <source>BUT_OK</source>
-            <translation>OK</translation>
-        </message>
-        <message>
-            <source>INF_HELLO_BANNER</source>
-            <translation>Information HELLO</translation>
-        </message>
-        <message>
-            <source>INF_HELLO_MENU</source>
-            <translation>Ceci est un simple test</translation>
-        </message>
-        <message>
-            <source>QUE_HELLO_LABEL</source>
-            <translation>Import Prnom</translation>
-        </message>
-        <message>
-            <source>QUE_HELLO_NAME</source>
-            <translation>Entrez votre prnom, s'il vous plait</translation>
-        </message>
-    </context>
+<TS version="2.0" language="fr_FR">
+<context>
+    <name>HELLOGUI</name>
+    <message>
+        <source>MEN_FILE</source>
+        <translation>&amp;Fichier</translation>
+    </message>
+    <message>
+        <source>MEN_FILE_HELLO</source>
+        <translation>Hello</translation>
+    </message>
+    <message>
+        <source>MEN_HELLO</source>
+        <translation>Hello</translation>
+    </message>
+    <message>
+        <source>MEN_OP_HELLO</source>
+        <translation>Salut</translation>
+    </message>
+    <message>
+        <source>MEN_OP_GOODBYE</source>
+        <translation>Au revoir</translation>
+    </message>
+    <message>
+        <source>MEN_OP_TESTME</source>
+        <translation>Essayez moi</translation>
+    </message>
+    <message>
+        <source>STS_OP_HELLO</source>
+        <translation>Saluer SALOME</translation>
+    </message>
+    <message>
+        <source>STS_OP_GOODBYE</source>
+        <translation>Dire au revoir à SALOME</translation>
+    </message>
+    <message>
+        <source>STS_OP_TESTME</source>
+        <translation>Test d'une action personnalisée dans le menu</translation>
+    </message>
+    <message>
+        <source>TLT_OP_HELLO</source>
+        <translation>Salut à toi !</translation>
+    </message>
+    <message>
+        <source>TLT_OP_GOODBYE</source>
+        <translation>Au revoir !</translation>
+    </message>
+    <message>
+        <source>TLT_OP_TESTME</source>
+        <translation>Essayez moi</translation>
+    </message>
+    <message>
+        <source>TOOL_TEST</source>
+        <translation>Test</translation>
+    </message>
+    <message>
+        <source>TOOL_HELLO</source>
+        <translation>Salut</translation>
+    </message>
+    <message>
+        <source>BUT_OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>INF_TESTME_TITLE</source>
+        <translation>HELLO: essayez moi</translation>
+    </message>
+    <message>
+        <source>INF_TESTME_MSG</source>
+        <translation>Ce n&apos;est qu&apos;un test d'action de menu personnalisée</translation>
+    </message>
+    <message>
+        <source>QUE_ENTER_NAME</source>
+        <translation>Indiquez votre nom</translation>
+    </message>
+    <message>
+        <source>QUE_HELLO_TITLE</source>
+        <translation>Saluer SALOME</translation>
+    </message>
+    <message>
+        <source>INF_HELLO_TITLE</source>
+        <translation>Salut</translation>
+    </message>
+    <message>
+        <source>INF_HELLO_MSG</source>
+        <translation>Salut %1 !</translation>
+    </message>
+    <message>
+        <source>ERR_HELLO_ALREADY_MET</source>
+        <translation>%1, nous nous connaissons déjà !</translation>
+    </message>
+    <message>
+        <source>ERR_ERROR</source>
+        <translation>Erreur inconnue</translation>
+    </message>
+    <message>
+        <source>QUE_GOODBYE_TITLE</source>
+        <translation>Dire au revoir à SALOME</translation>
+    </message>
+    <message>
+        <source>INF_GOODBYE_TITLE</source>
+        <translation>Au revoir</translation>
+    </message>
+    <message>
+        <source>INF_GOODBYE_MSG</source>
+        <translation>Au revoir %1 !</translation>
+    </message>
+    <message>
+        <source>ERR_GOODBYE_DID_NOT_MEET</source>
+        <translation>%1, nous ne nous sommes pas encore rencontrés !</translation>
+    </message>
+</context>
 </TS>
