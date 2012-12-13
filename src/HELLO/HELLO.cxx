@@ -21,6 +21,7 @@
 //
 
 #include "HELLO.hxx"
+#include "HELLO_version.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(SALOMEDS)
@@ -246,6 +247,16 @@ void HELLO::copyOrMove( const HELLO_ORB::object_list& what,
     else
       useCaseBuilder->AppendTo( where, sobj );        // append to the end of list
   }
+}
+
+// Version information
+char* HELLO::getVersion()
+{
+#if HELLO_DEVELOPMENT
+  return CORBA::string_dup(HELLO_VERSION_STR"dev");
+#else
+  return CORBA::string_dup(HELLO_VERSION_STR);
+#endif
 }
 
 extern "C"

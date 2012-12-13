@@ -44,6 +44,7 @@ public:
   void              copyOrMove( const HELLO_ORB::object_list& what,
 				SALOMEDS::SObject_ptr where,
 				CORBA::Long row, CORBA::Boolean isCopy );
+  virtual char*     getVersion();
 };
 
 extern "C"
