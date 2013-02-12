@@ -51,15 +51,9 @@ HELLO_ORB::HELLO_Gen_var HELLOGUI::myEngine;
   
   Creates an instance of the HELLO GUI module.
   Initializes (loads if necessary) HELLO module engine.
-
-  \note Since SalomeApp_Module uses virtual inheritance 
-  from LightApp_Module class, it's necessary to call both
-  base classes constructors, even though HELLOGUI class
-  inherits directly only SalomeApp_Module.
 */
 HELLOGUI::HELLOGUI() :
-  SalomeApp_Module( "HELLO" ), // module name
-  LightApp_Module( "HELLO" )   // module name
+  SalomeApp_Module( "HELLO" ) // module name
 {
   init(); // internal initialization
 }
