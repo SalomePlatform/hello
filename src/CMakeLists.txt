@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,18 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  SuperVisionTest AddComponent : example of component that adds two numbers
-#  File   : Makefile.in
-#  Author : , CEA
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-#
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
+##
+# Common packages
+##
+SET(SUBDIRS_COMMON
+  HELLO HELLOGUI
+)
 
-# header files 
-salomeinclude_HEADERS = HELLO.hxx
+SET(SUBDIRS
+  ${SUBDIRS_COMMON}
+)
 
-# Libraries targets
-lib_LTLIBRARIES = libHELLOEngine.la
-dist_libHELLOEngine_la_SOURCES = \
-	HELLO.cxx
-
-libHELLOEngine_la_CPPFLAGS = \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
-	-I$(top_builddir)/idl \
-	-I$(top_builddir)
-
-libHELLOEngine_la_LDFLAGS = \
-	../../idl/libSalomeIDLHELLO.la \
-	$(KERNEL_LDFLAGS) \
-	-lSalomeContainer \
-	-lOpUtil \
-	-lSalomeIDLKernel
+FOREACH(dir ${SUBDIRS})
+ ADD_SUBDIRECTORY(${dir})
+ENDFOREACH(dir ${SUBDIRS})
+            

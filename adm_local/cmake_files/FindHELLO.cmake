@@ -1,4 +1,3 @@
-#!/bin/sh
 # Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
@@ -17,12 +16,10 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+#
 
-rm -rf autom4te.cache aclocal.m4 configure make_config
-find . -name "*~" -print -exec rm {} \;
-find . -name "*.pyc" -print -exec rm {} \;
-#exit
-# ==================== ON SORT AVANT
+SET(HELLO_CXXFLAGS -I${HELLO_ROOT_DIR}/include/salome)
 
-find . -name Makefile.in | xargs rm -f
-( cd adm_local/unix/config_files && rm -f config.* depcomp install-sh ltmain.sh missing py-compile )
+FIND_LIBRARY(HELLOEngine HELLOEngine ${HELLO_ROOT_DIR}/lib/salome)
+FIND_LIBRARY(HELLO HELLO ${HELLO_ROOT_DIR}/lib/salome)
+FIND_LIBRARY(SalomeIDLHELLO SalomeIDLHELLO ${HELLO_ROOT_DIR}/lib/salome)

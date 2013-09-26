@@ -16,7 +16,16 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+#
 
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
+IF(NOT SalomeHELLO_FIND_QUIETLY)
+  MESSAGE(STATUS "Looking for Salome HELLO ...")
+ENDIF()
 
-SUBDIRS = config_files
+SET(CMAKE_PREFIX_PATH "${HELLO_ROOT_DIR}")
+
+SALOME_FIND_PACKAGE(SalomeHELLO SalomeHELLO CONFIG)
+
+IF(NOT SalomeHELLO_FIND_QUIETLY)
+  MESSAGE(STATUS "Found Salome HELLO: ${HELLO_ROOT_DIR}")
+ENDIF()

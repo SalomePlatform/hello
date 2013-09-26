@@ -292,7 +292,7 @@ module ("HELLO" in our case) with the following parameters:
   <section name="HELLO">
     <parameter name="name"          value="Hello"/>
     <parameter name="icon"          value="HELLO.png"/>
-    <parameter name="version"       value="@VERSION@"/>
+    <parameter name="version"       value="@SALOMEHELLO_VERSION@"/>
     <parameter name="documentation" value="hello_help"/>
   </section>
 \endcode

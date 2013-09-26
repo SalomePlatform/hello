@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,15 +17,25 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  $Header$
-#
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
+INCLUDE(UseOmniORB)  # Provided by KERNEL
 
-dist_salomeres_DATA = \
-HELLO.png \
-handshake.png \
-goodbye.png \
-testme.png
+INCLUDE_DIRECTORIES(
+  ${OMNIORB_INCLUDE_DIR}
+  ${KERNEL_INCLUDE_DIRS}
+  ${PROJECT_BINARY_DIR}/idl
+)
 
-# VSR: little trick to avoid putting if HELLOCatalog.xml to the distribution archive
-nodist_salomeres_SCRIPTS = HELLOCatalog.xml SalomeApp.xml
+SET(SalomeIDLHELLO_IDLSOURCES
+  HELLO_Gen.idl
+)
+
+SET(_idl_include_dirs
+  ${KERNEL_ROOT_DIR}/idl/salome
+)
+
+SET(_idl_link_flags
+  ${KERNEL_SalomeIDLKernel}
+)
+
+OMNIORB_ADD_MODULE(SalomeIDLHELLO "${SalomeIDLHELLO_IDLSOURCES}" "${_idl_include_dirs}" "${_idl_link_flags}")
+INSTALL(TARGETS SalomeIDLHELLO EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})

@@ -252,7 +252,7 @@ void HELLO::copyOrMove( const HELLO_ORB::object_list& what,
 // Version information
 char* HELLO::getVersion()
 {
-#if HELLO_DEVELOPMENT
+#if defined(HELLO_DEVELOPMENT)
   return CORBA::string_dup(HELLO_VERSION_STR"dev");
 #else
   return CORBA::string_dup(HELLO_VERSION_STR);

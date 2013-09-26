@@ -40,7 +40,7 @@
             <component-username>Hello</component-username>
             <component-type>OTHER</component-type>
             <component-author>Vadim SANDLER</component-author>
-            <component-version>@VERSION@</component-version>
+            <component-version>@SALOMEHELLO_VERSION@</component-version>
             <component-comment>Sample module</component-comment>
             <component-multistudy>1</component-multistudy>
             <component-impltype>1</component-impltype>
@@ -54,7 +54,7 @@
                     <component-service>
                         <service-name>hello</service-name>
                         <service-author>Vadim SANDLER</service-author>
-                        <service-version>@VERSION@</service-version>
+                        <service-version>@SALOMEHELLO_VERSION@</service-version>
                         <service-comment>Hello function</service-comment>
                         <service-by-default>1</service-by-default>
                         <inParameter-list>
@@ -81,7 +81,7 @@
                     <component-service>
                         <service-name>goodbye</service-name>
                         <service-author>Vadim SANDLER</service-author>
-                        <service-version>@VERSION@</service-version>
+                        <service-version>@SALOMEHELLO_VERSION@</service-version>
                         <service-comment>Goodbye function</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
