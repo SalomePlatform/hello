@@ -26,6 +26,11 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/idl
 )
 
+# --- definitions ---
+ADD_DEFINITIONS(
+  ${OMNIORB_DEFINITIONS}
+)
+
 # libraries to link to
 SET(_link_LIBRARIES
   ${OMNIORB_LIBRARIES}

@@ -892,11 +892,13 @@ void HELLOGUI::init()
 // Export the module
 extern "C" {
   // FACTORY FUNCTION: create an instance of the Hello module GUI
+  HELLO_EXPORT
   CAM_Module* createModule()
   {
     return new HELLOGUI();
   }
   // VERSIONING FUNCTION: get Hello module's version identifier
+  HELLO_EXPORT
   char* getModuleVersion() 
   {
     return (char*)HELLO_VERSION_STR; // HELLO_VERSION_STR is defined in HELLO_version.h

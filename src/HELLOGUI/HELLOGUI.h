@@ -25,6 +25,17 @@
 #ifndef _HELLOGUI_H_
 #define _HELLOGUI_H_
 
+
+#ifdef WIN32
+# if defined HELLO_EXPORTS || defined Hello_EXPORTS
+#  define HELLO_EXPORT __declspec( dllexport )
+# else
+#  define HELLO_EXPORT __declspec( dllimport )
+# endif
+#else
+# define HELLO_EXPORT
+#endif
+
 #include <SalomeApp_Module.h>
 
 #include <SALOMEconfig.h>
@@ -32,7 +43,7 @@
 
 class SalomeApp_Application;
 
-class HELLOGUI: public SalomeApp_Module
+class HELLO_EXPORT HELLOGUI: public SalomeApp_Module
 {
   Q_OBJECT
 

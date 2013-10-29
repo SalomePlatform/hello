@@ -23,11 +23,22 @@
 #ifndef _HELLO_HXX_
 #define _HELLO_HXX_
 
+#ifdef WIN32
+# if defined HELLOENGINE_EXPORTS || defined HELLOEngine_EXPORTS
+#  define HELLOENGINE_EXPORT __declspec( dllexport )
+# else
+#  define HELLOENGINE_EXPORT __declspec( dllimport )
+# endif
+#else
+# define HELLOENGINE_EXPORT
+#endif
+
+
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(HELLO_Gen)
 #include <SALOME_Component_i.hxx>
 
-class HELLO:
+class HELLOENGINE_EXPORT HELLO :
   public POA_HELLO_ORB::HELLO_Gen,
   public Engines_Component_i 
 {
@@ -48,6 +59,7 @@ public:
 };
 
 extern "C"
+HELLOENGINE_EXPORT
 PortableServer::ObjectId* HELLOEngine_factory( CORBA::ORB_ptr orb,
 					       PortableServer::POA_ptr poa,
 					       PortableServer::ObjectId* contId,
