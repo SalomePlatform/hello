@@ -46,6 +46,9 @@ SET_AND_CHECK(HELLO_INCLUDE_DIRS "${HELLO_ROOT_DIR_EXP}/@SALOME_INSTALL_HEADERS@
 SET(HELLO_INCLUDE_DIRS "${HELLO_INCLUDE_DIRS};@_SalomeHELLO_EXTRA_HEADERS@")
 SET(HELLO_DEFINITIONS "@GUI_DEFINITIONS@")
 
+# Package specific environment variables
+@_SalomeHELLO_EXTRA_ENV_FULL@
+
 #### Now the specificities
 
 # Options exported by the package:
