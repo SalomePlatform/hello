@@ -44,20 +44,18 @@ The steps in the development are as follows:
 
 The first step in the development process is the creation of the
 module tree file hierarchy. The typical SALOME module usually includes
-some set of the configuration files (used in the build procedure of a
-module), Makefiles, IDL file that provides a definition of a CORBA
-services implemented in a module and a set of source files which are
-compiled by the build procedure to the module CORBA engine library and
-(optionally) GUI library.
+configuration files (used in the build procedure of a
+module), CMakeLists.txt files, IDL file that provides a definition 
+of a CORBA services implemented in a module and a set of source files 
+which are compiled by the build procedure to the module 
+CORBA engine library and (optionally) GUI library.
 
 The following file structure is typical for the SALOME module:
 
 <pre>
 + HELLO1_SRC
-   + build_configure
-   + clean_configure
-   + configure.ac
-   + Makefile.am
+   + CMakeLists.txt
+   + SalomeHELLOConfig.cmake.in
    + HELLO_version.h.in
    + AUTHORS
    + COPYING
@@ -66,36 +64,33 @@ The following file structure is typical for the SALOME module:
    + NEWS
    + README
    + adm_local
-     + Makefile.am
-     + unix
-       + Makefile.am
-       + make_common_starter.am
-       + config_files
-         + Makefile.am
-         + check_GUI.m4
-         + check_HELLO.m4
+     + CMakeLists.txt
+     + cmake_files
+       + CMakeLists.txt
+       + FindSalomeHELLO.cmake
    + bin
-     + Makefile.am
+     + CMakeLists.txt
      + VERSION.in
      + runAppli.in
      + myrunSalome.py
    + idl
-     + Makefile.am
+     + CMakeLists.txt
      + HELLO_Gen.idl
    + src
-     + Makefile.am
+     + CMakeLists.txt
      + HELLO
-       + Makefile.am
+       + CMakeLists.txt
        + HELLO.hxx
        + HELLO.cxx
      + HELLOGUI
-       + Makefile.am
+       + CMakeLists.txt
        + HELLOGUI.h
        + HELLOGUI.cxx
        + HELLO_msg_en.ts
+       + HELLO_msg_fr.ts
        + HELLO_icons.ts
    + resources
-     + Makefile.am
+     + CMakeLists.txt
      + HELLO.png
      + goodbye.png
      + handshake.png
@@ -103,7 +98,7 @@ The following file structure is typical for the SALOME module:
      + HELLOCatalog.xml.in
      + SalomeApp.xml.in
    + doc
-     + Makefile.am
+     + CMakeLists.txt
      + doxyfile.in
      + index.doc
      + images
@@ -126,19 +121,16 @@ to copy files from another module such as GEOM or MED.
 The module name is HELLO, the component name is HELLO and all the
 files are put in a directory named HELLO1_SRC.
 Below is a short description of these files. Note, that files with .in
-suffix are the autoconf templates from which the actual files are
+suffix are the cmake templates from which the actual files are
 generated during the build procedure.
 
-- \c build_configure
-- \c configure.ac
-- \c Makefile.am
-- \c make_common_starter.am
-- \c clean_configure
+- \c CMakeLists.txt
 
-These files are a part of the build system based on GNU
-automake/autoconf auto-tools. These files define the build procedure,
-namely, compilation and installation rules like compiler and linker
-options, installation destination folder, package version etc.
+These files are input text files that contain the project parameters 
+and describe the flow control of the build process in simple CMake language as 
+a part of the build system based on CMake. These files define 
+the build procedure, namely, compilation and installation rules such as compiler 
+and linker options, installation destination folder, package version etc.
 
 - \c AUTHORS
 - \c COPYING
@@ -147,15 +139,14 @@ options, installation destination folder, package version etc.
 - \c NEWS
 - \c README
 
-These files are also a usual part of the GNU auto-tools based build
-procedure. These files are used by developers to provide an additional
-information on a product, like license, authors and distribution
-information, change log between versions of a product, installation
-hints, etc.
+These files are a usual part of open source projects. These files are 
+used by developers to provide an additional information on a product,
+like license, authors and distribution information, change log between
+versions of a product, installation hints, etc.
 
 - \c HELLO_version.h.in 
 
-This is an optional C++ header file, specifying the version
+This is an optional C++ header file, that specifies the version
 macro-definitions which can be used, for example, in other modules to
 check the version of the SALOME module (HELLO module in this
 case).
@@ -165,16 +156,28 @@ case).
 This directory contains additional administrative files used by the
 build procedure.
 
-- \c adm_local/unix/config_files/check_GUI.m4
-- \c adm_local/unix/config_files/check_HELLO.m4
+- \c adm_local/cmake_files/FindSalomeHELLO.cmake
 
-These files are another part of the GNU auto-tools based build
-procedure. The scripts written in m4 language are usually used to test
-an availability of some 3rd-party pre-requisite product, compiler
-feature, different configuration options. For example, check_GUI.m4
-file provides a procedure to test availability of SALOME GUI
-module and thus specify if GUI library of HELLO module should be built
-or no.
+Some modules can need some external packages in order to compile and 
+run properly. The usual approach is to write a special *.cmake file
+for the purpose of finding a certain piece of software and to set it's
+libraries, include files and definitions into appropriate variables so that
+they can be used in the build process of another project.
+It is possible to include the standard CMake detection modules (FindXyz.cmake files,
+located in the standard CMake installation directory) or, if CMake does not provide
+a search procedure for some required software, it is necessary to create *.cmake
+module for each pre-requisite.
+
+Also, it is good idea to create and distribute *.cmake file for the project being
+developed; it can be used then in the dependent projects. For example, HELLO module
+installs a file FindSalomeHELLO.cmake that can be used for its detection.
+
+To search SALOME HELLO module in some other project it will be only needed to write
+the following code in CMakeLists.txt: 
+
+\code
+FIND_PACKAGE(SalomeHELLO)
+\endcode
 
 - \c bin
 
@@ -229,7 +232,7 @@ module's GUI library.
 
 Strictly speaking, the GUI library is optional for each SALOME module.
 In some cases it's enough to implement CORBA engine only. Then,
-the services of the module will be avaiable in a CORBA environment.
+the services of the module will be available in a CORBA environment.
 The module can be loaded to the SALOME container and its services
 can be used in the SALOME supervision computation schemas, in Python
 scripts or/and in C++ implementation of other modules.
@@ -246,6 +249,7 @@ the HELLO module. In particular, these files specify menus, toolbars,
 dialog boxes and other such staff.
 
 - \c src/HELLOGUI/HELLO_msg_en.ts
+- \c src/HELLOGUI/HELLO_msg_fr.ts
 - \c src/HELLOGUI/HELLO_icons.ts
 
 These files provide a description (internationalization) of GUI
@@ -299,7 +303,7 @@ module ("HELLO" in our case) with the following parameters:
 
 The \a "name" parameter defines GUI name of a module. The \a "icon"
 parameter defines a GUI icon of a module. Optional \a "version" parameter
-defines the version fo the module. The \a "documentation" parameter
+defines the version of the module. The \a "documentation" parameter
 provides a name for the help-related resource section (see below).
 
 The section \a "resources" of a file specifies the directory that contains
@@ -358,54 +362,55 @@ of the HTML pages, style sheet (\c doxygen.css) etc.
 
 \page build_proc_files Build procedure input files
 
-In most cases SALOME uses \b autoconf, \b automake and other GNU auto-tools
-to build the modules. The \c configure script is used for the build procedure
-to test the system configuration and to pre-configure the module construction
-\c Makefile files. 
+In most cases SALOME uses \b CMake-based build system for modules.
+CMake is a cross-platform build system which works on Linux, Windows
+and other operating systems.
 
-The \c build_configure script provides a procedure that uses
-\c configure.ac and set of \c Makefile.am files as input and uses \b autoconf
-to generate the \c configure script and \b automake to generate \c Makefile.in
-files. 
+The \c CMakeLists.txt files are used to describe the build procedure,
+in particular:
+- Test platform;
+- Test system configuration;
+- Detect pre-requisites;
+- Generate build rules (for example, standard UNIX makefiles on Linux,
+  MSVC solutions, etc).
 
-The files with an \c .in extension are the skeletons that are the input
-of the \c configure script (to be more precise, these files should be
-listed in the end of the \c configure.ac file in the \c AC_OUTPUT()
-autoconf macro) and are transformed to the resulting files during the
-configuration process.
+Project's root directory provides main CMake configuration that allows 
+build all targets into one set of binaries and libraries. Each sub-directory
+also includes CMake configuration file (CMakeLists.txt) that specifies
+targets being build.
 
-Almost all files used for this process are located in SALOME
-base module KERNEL that is referenced by the \c KERNEL_ROOT_DIR
-environment variable, namely in its \c salome_adm sub-folder.
+The file \c CMakeLists.txt in root directory of the HELLO module provides 
+basic build rules to be used in other \c CMakeLists.txt files. 
+It sets main properties of project: name, version, pre-requisites, 
+installation paths, programming languages being used by the project,
+tree of sub-directories, etc.
+
+A lot of files used by the build procedure of HELLO module are located
+in SALOME KERNEL module (that is referenced by the \c KERNEL_ROOT_DIR
+environment variable), namely in its \c salome_adm sub-folder.
 Similarly, the \c GUI_ROOT_DIR environment variable is used for the
 graphical user interface (GUI) module of SALOME; this module also
-provides a set of configuration utilities (m4 files) in its 
-\c adm_local folder. However, some files must be modified as a
-function of the target module. This is the case for \c build_configure
-and \c configure.ac files which usually need to be adapted to the module needs. 
+provides a set of configuration utilities (\c *.cmake files) in its 
+\c adm_local folder.
 
-The file \c make_common_starter.am file in the \c adm_local directory of
-the HELLO module provides basic build rules to be used in other
-\c Makefile.am files. To refer to this file in any \c Makefile.am it is
-necessary to use \a "include" clause:
-
-\code
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
-\endcode
-
-The \c adm_local/unix/config_files is a directory in which the m4 files
-that are used to test the configuration of the system in the configuration
-process can be placed. If the \c salome_adm files are not sufficient,
-additional configuration files can be put to the \c adm_local directory.
+The files with an \c .in extension are the skeletons which are processed
+by CMake to transform it to the resulting files in the build directory during
+the configuration process.
 
 \ref tree_structure "<< Previous"<br>\ref idl_dir ">> Next"
 
 \page idl_dir The idl directory
 
-The \c idl directory requires a \c Makefile.am that must make the
+The \c idl directory requires a \c CMakeLists.txt that must make the
 compilation of the CORBA IDL \c HELLO_Gen.idl file and install all the
-generated files into the correct module installation directories. The
-\a BASEIDL_FILES target has to be modified to reach this goal.
+generated files into the correct module installation directories.
+This is done by using \c OMNIORB_ADD_MODULE() CMake macro:
+
+\code
+OMNIORB_ADD_MODULE(SalomeIDLHELLO HELLO_Gen.idl ${KERNEL_ROOT_DIR}/idl/salome ${KERNEL_SalomeIDLKernel})
+INSTALL(TARGETS SalomeIDLHELLO EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
+\endcode
+
 
 The IDL file itself must define a CORBA component for which the name must
 be different from the module name to avoid name conflicts and define a
@@ -421,20 +426,20 @@ The \c src directory contains all source files required to build CORBA engine an
 (optionally) GUI libraries of the module. Each of these entities usually
 has (but this is not actually obligatory) its own directory.
 
-The \c Makefile.am simply triggers the path of sub-directories described
-by the \a SUBDIRS target.
+The \c CMakeLists.txt file triggers the path of sub-directories described
+by the \a ADD_SUBDIRECTORY() command.
 
 - \c src/HELLO sub-directory
 
 This sub-directory contains the C++ source files that implement the engine
-library of the module. The \c Makefile.am defines the rules used to build
+library of the module. The \c CMakeLists.txt defines the rules used to build
 the engine library from these source files. The name of the module
 engine library is predefined and should be set as \c lib\<MODULE\>Engine.so
 where \c MODULE is a name of the module. In the case of the HELLO
 module, the name of the engine library should be \c libHELLOEngine.so.
 
 The \c HELLO.h, \c HELLO.cxx files implement \a HELLO class that is derived
-from the \a HELLO_Gen interface of the \a POA_HELLO_ORB CORBA module and the
+from the \a HELLO_Gen interface of the \a HELLO_ORB__POA CORBA module and the
 \a SALOME_Component_i class (base implementation of SALOME module engine
 exported by the KERNEL module).
 
@@ -459,15 +464,15 @@ by demand:
 \code
 extern "C"
 {
-  PortableServer::ObjectId* HELLOEngine_factory(
+  PortableServer::ObjectId* HELLOEngine_factory( 
     CORBA::ORB_ptr orb,
-    PortableServer::POA_ptr poa,
+    PortableServer::POA_ptr poa, 
     PortableServer::ObjectId* contId,
-    const char* instanceName,
-    const char* interfaceName)
+    const char* instanceName, 
+    const char* interfaceName )
   {
-    HELLO* myHELLO = new HELLO(orb, poa, contId, instanceName, interfaceName);
-    return myHELLO->getId();
+    HELLO* component = new HELLO( orb, poa, contId, instanceName, interfaceName );
+    return component->getId();
   }
 }
 \endcode
@@ -910,21 +915,25 @@ perform several steps:
 [bash% ] source env_products.sh
 [bash% ] mkdir HELLO_BUILD
 [bash% ] cd HELLO_BUILD
-[bash% ] ../HELLO1_SRC/build_configure
-[bash% ] ../HELLO1_SRC/configure --prefix=\<HELLO_module_installation_dir\>
+[bash% ] cmake -DCMAKE_BUILD_TYPE=<Mode> -DCMAKE_INSTALL_PREFIX=<HELLO_module_installation_dir> ../HELLO1_SRC
 [bash% ] make
 [bash% ] make install
 </pre>
 
-The first command creates a build directory for the HELLO module. Then
-next step is to cd to this build directory. From this directory you
-sequentially invoke \c build_configure, \c configure, \c make and \c make install
-commands. On each step, you have to ensure that the operation is
-finished correctly (no errors raised).
+The first command sets environment for building project.
 
-The \c \<HELLO_module_installation_dir\> variable above defines the
-destination directory to which the HELLO module should be
-installed. After the last step is finished, the HELLO module is built
+Second command creates a build directory for the HELLO module. Then
+next step is to cd to this build directory. From this directory you 
+invoke cmake command, where <Mode> is build mode (Release or Debug),
+<HELLO_module_installation_dir> is a destination folder to install HELLO module of SALOME.
+By default (if CMAKE_INSTALL_PREFIX option is not given), HELLO module will be 
+configured for installation to the /usr directory that requires root permissions 
+to complete the installation. 
+
+Next steps - build the package (\c make) and install it (\c make install). 
+
+On each step, you have to ensure that the operation is finished correctly 
+(no errors raised). After the last step is finished, the HELLO module is built
 and installed to the \c \<HELLO_module_installation_dir\> directory.
 
 \ref doc_dir "<< Previous"<br>\ref run_procedure ">> Next"
