@@ -79,6 +79,7 @@ SET(_ts_RESOURCES
   HELLO_icons.ts
   HELLO_msg_en.ts
   HELLO_msg_fr.ts
+  HELLO_msg_ja.ts
 ) 
 
 # --- rules ---
