@@ -5,111 +5,111 @@
     <name>HELLOGUI</name>
     <message>
       <source>MEN_FILE</source>
-      <translation>MEN_FILE</translation>
+      <translation>ファイル</translation>
     </message>
     <message>
       <source>MEN_FILE_HELLO</source>
-      <translation>MEN_FILE_HELLO</translation>
+      <translation>こんにちは</translation>
     </message>
     <message>
       <source>MEN_HELLO</source>
-      <translation>MEN_HELLO</translation>
+      <translation>こんにちは</translation>
     </message>
     <message>
       <source>MEN_OP_HELLO</source>
-      <translation>MEN_OP_HELLO</translation>
+      <translation>こんにちは</translation>
     </message>
     <message>
       <source>MEN_OP_GOODBYE</source>
-      <translation>MEN_OP_GOODBYE</translation>
+      <translation>さようなら</translation>
     </message>
     <message>
       <source>MEN_OP_TESTME</source>
-      <translation>MEN_OP_TESTME</translation>
+      <translation>試して</translation>
     </message>
     <message>
       <source>STS_OP_HELLO</source>
-      <translation>STS_OP_HELLO</translation>
+      <translation>SALOMEに挨拶</translation>
     </message>
     <message>
       <source>STS_OP_GOODBYE</source>
-      <translation>STS_OP_GOODBYE</translation>
+      <translation>SALOMEにさよなら</translation>
     </message>
     <message>
       <source>STS_OP_TESTME</source>
-      <translation>STS_OP_TESTME</translation>
+      <translation>テストメニューの実行</translation>
     </message>
     <message>
       <source>TLT_OP_HELLO</source>
-      <translation>TLT_OP_HELLO</translation>
+      <translation>こんにちは！</translation>
     </message>
     <message>
       <source>TLT_OP_GOODBYE</source>
-      <translation>TLT_OP_GOODBYE</translation>
+      <translation>バイバイ ！</translation>
     </message>
     <message>
       <source>TLT_OP_TESTME</source>
-      <translation>TLT_OP_TESTME</translation>
+      <translation>試して</translation>
     </message>
     <message>
       <source>TOOL_TEST</source>
-      <translation>TOOL_TEST</translation>
+      <translation>テスト</translation>
     </message>
     <message>
       <source>TOOL_HELLO</source>
-      <translation>TOOL_HELLO</translation>
+      <translation>こんにちは</translation>
     </message>
     <message>
       <source>BUT_OK</source>
-      <translation>BUT_OK</translation>
+      <translation>OK</translation>
     </message>
     <message>
       <source>INF_TESTME_TITLE</source>
-      <translation>INF_TESTME_TITLE</translation>
+      <translation>こんにちは： 試して</translation>
     </message>
     <message>
       <source>INF_TESTME_MSG</source>
-      <translation>INF_TESTME_MSG</translation>
+      <translation>これはカスタム メニュー動作のテストです。</translation>
     </message>
     <message>
       <source>QUE_ENTER_NAME</source>
-      <translation>QUE_ENTER_NAME</translation>
+      <translation>あなたの名前を入力してください</translation>
     </message>
     <message>
       <source>QUE_HELLO_TITLE</source>
-      <translation>QUE_HELLO_TITLE</translation>
+      <translation>SALOMEに挨拶</translation>
     </message>
     <message>
       <source>INF_HELLO_TITLE</source>
-      <translation>INF_HELLO_TITLE</translation>
+      <translation>こんにちは</translation>
     </message>
     <message>
       <source>INF_HELLO_MSG</source>
-      <translation>INF_HELLO_MSG</translation>
+      <translation>こんにちは, %1!</translation>
     </message>
     <message>
       <source>ERR_HELLO_ALREADY_MET</source>
-      <translation>ERR_HELLO_ALREADY_MET</translation>
+      <translation>%1, すでに会いました!!</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
-      <translation>ERR_ERROR</translation>
+      <translation>エラー</translation>
     </message>
     <message>
       <source>QUE_GOODBYE_TITLE</source>
-      <translation>QUE_GOODBYE_TITLE</translation>
+      <translation>SALOMEにお別れ</translation>
     </message>
     <message>
       <source>INF_GOODBYE_TITLE</source>
-      <translation>INF_GOODBYE_TITLE</translation>
+      <translation>さようなら</translation>
     </message>
     <message>
       <source>INF_GOODBYE_MSG</source>
-      <translation>INF_GOODBYE_MSG</translation>
+      <translation>バイバイ, %1!</translation>
     </message>
     <message>
       <source>ERR_GOODBYE_DID_NOT_MEET</source>
-      <translation>ERR_GOODBYE_DID_NOT_MEET</translation>
+      <translation>%1, まだ挨拶できてない!!</translation>
     </message>
   </context>
 </TS>
