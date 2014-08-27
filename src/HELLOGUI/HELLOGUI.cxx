@@ -158,9 +158,9 @@ void HELLOGUI::initialize( CAM_Application* app )
 
   // create toolbars
   int aToolId;
-  aToolId = createTool ( tr( "TOOL_TEST" ) );                           // Test toolbar
+  aToolId = createTool ( tr( "TOOL_TEST" ), QString( "HelloTest" ) );   // Test toolbar
   createTool( OpTestMe, aToolId );                                      // Test - Test me
-  aToolId = createTool ( tr( "TOOL_HELLO" ) );                          // Hello toolbar
+  aToolId = createTool ( tr( "TOOL_HELLO" ), QString( "HelloMain" ) );  // Hello toolbar
   createTool( OpHello, aToolId );                                       // Hello - Hello
   createTool( OpGoodbye, aToolId );                                     // Hello - Goodbye
 
