@@ -256,9 +256,11 @@ void HELLOGUI::windows( QMap<int, int>& theMap ) const
   // want Object browser, in the left area
   theMap.insert( SalomeApp_Application::WT_ObjectBrowser,
 		 Qt::LeftDockWidgetArea );
+#ifndef DISABLE_PYCONSOLE
   // want Python console, in the bottom area
   theMap.insert( SalomeApp_Application::WT_PyConsole,
 		 Qt::BottomDockWidgetArea );
+#endif
 }
 
 /*!
