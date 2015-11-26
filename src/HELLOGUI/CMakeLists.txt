@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(UseQt4Ext)
+INCLUDE(UseQtExt)
 
 # --- options ---
 # additional include directories
@@ -61,7 +61,7 @@ SET(HELLOGUI_HEADERS
 # --- sources ---
 
 # sources / moc wrappings
-QT4_WRAP_CPP(_moc_SOURCES ${HELLOGUI_HEADERS})
+QT_WRAP_MOC(_moc_SOURCES ${HELLOGUI_HEADERS})
 
 
 # sources / static
@@ -89,4 +89,4 @@ TARGET_LINK_LIBRARIES(HELLO SalomeIDLHELLO ${_link_LIBRARIES} )
 INSTALL(TARGETS HELLO EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 INSTALL(FILES ${HELLOGUI_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
-QT4_INSTALL_TS_RESOURCES("${_ts_RESOURCES}" "${SALOME_HELLO_INSTALL_RES_DATA}")
+QT_INSTALL_TS_RESOURCES("${_ts_RESOURCES}" "${SALOME_HELLO_INSTALL_RES_DATA}")
