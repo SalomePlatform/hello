@@ -23,6 +23,7 @@
 #include "HELLO.hxx"
 #include "HELLO_version.h"
 
+#include <SALOME_KernelServices.hxx>
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
@@ -74,11 +75,10 @@ HELLO::~HELLO()
 
 /*!
   \brief Say hello to \a name
-  \param study SALOME study
   \param name person's name
   \return operation status
 */
-HELLO_ORB::status HELLO::hello( SALOMEDS::Study_ptr study, const char* name )
+HELLO_ORB::status HELLO::hello( const char* name )
 {
   // set exception handler to catch unexpected CORBA exceptions
   Unexpect aCatch(SALOME_SalomeException);
@@ -86,23 +86,24 @@ HELLO_ORB::status HELLO::hello( SALOMEDS::Study_ptr study, const char* name )
   // set result status to error initially
   HELLO_ORB::status result = HELLO_ORB::OP_ERR_UNKNOWN;
 
+  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
   // check if reference to study is valid
-  if ( !CORBA::is_nil( study ) ) {
+  if ( !CORBA::is_nil( aStudy ) ) {
     // get full object path
     std::string fullName = studyName( name );
     // check if the object with the same name is already registered in the study
-    SALOMEDS::SObject_var sobj = study->FindObjectByPath( fullName.c_str() );
+    SALOMEDS::SObject_var sobj = aStudy->FindObjectByPath( fullName.c_str() );
     if ( !CORBA::is_nil( sobj ) ) {
       // person is already registered in the study -> ERROR
       result = HELLO_ORB::OP_ERR_ALREADY_MET;
     }
     else {
       // person is not registered yet -> register
-      SALOMEDS::StudyBuilder_var     studyBuilder   = study->NewBuilder();          // study builder
-      SALOMEDS::UseCaseBuilder_var   useCaseBuilder = study->GetUseCaseBuilder();   // use case builder
+      SALOMEDS::StudyBuilder_var     studyBuilder   = aStudy->NewBuilder();          // study builder
+      SALOMEDS::UseCaseBuilder_var   useCaseBuilder = aStudy->GetUseCaseBuilder();   // use case builder
 
       // find HELLO component; create it if not found
-      SALOMEDS::SComponent_var father = study->FindComponent( "HELLO" );
+      SALOMEDS::SComponent_var father = aStudy->FindComponent( "HELLO" );
       if ( CORBA::is_nil( father ) ) {
 	// create component
 	father = studyBuilder->NewComponent( "HELLO" ); 
@@ -140,11 +141,10 @@ HELLO_ORB::status HELLO::hello( SALOMEDS::Study_ptr study, const char* name )
 
 /*!
   \brief Say goodbye to \a name
-  \param study SALOME study
   \param name person's name
   \return operation status
 */
-HELLO_ORB::status HELLO::goodbye( SALOMEDS::Study_ptr study, const char* name )
+HELLO_ORB::status HELLO::goodbye( const char* name )
 {
   // set exception handler to catch unexpected CORBA exceptions
   Unexpect aCatch(SALOME_SalomeException);
@@ -152,8 +152,9 @@ HELLO_ORB::status HELLO::goodbye( SALOMEDS::Study_ptr study, const char* name )
   // set result status to error initially
   HELLO_ORB::status result = HELLO_ORB::OP_ERR_UNKNOWN;
 
+  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
   // check if reference to study is valid
-  if ( !CORBA::is_nil( study ) ) {
+  if ( !CORBA::is_nil( aStudy ) ) {
     // get full object path
     std::string fullName = studyName( name );
 
@@ -162,9 +163,9 @@ HELLO_ORB::status HELLO::goodbye( SALOMEDS::Study_ptr study, const char* name )
 
     // check if the object with the same name is registered in the study
     // find all objects with same name
-    SALOMEDS::StudyBuilder_var studyBuilder = study->NewBuilder();            // study builder
-    SALOMEDS::UseCaseBuilder_var useCaseBuilder = study->GetUseCaseBuilder(); // use case builder
-    SALOMEDS::SObject_var sobj = study->FindObjectByPath( fullName.c_str() );
+    SALOMEDS::StudyBuilder_var studyBuilder = aStudy->NewBuilder();            // study builder
+    SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder(); // use case builder
+    SALOMEDS::SObject_var sobj = aStudy->FindObjectByPath( fullName.c_str() );
     while ( !CORBA::is_nil( sobj ) ) {
       std::list<SALOMEDS::SObject_var> toRemove;
       toRemove.push_back( sobj );
@@ -187,7 +188,7 @@ HELLO_ORB::status HELLO::goodbye( SALOMEDS::Study_ptr study, const char* name )
 	// set operation status to OK as at least one object is removed
 	result = HELLO_ORB::OP_OK;
       }
-      sobj = study->FindObjectByPath( fullName.c_str() );
+      sobj = aStudy->FindObjectByPath( fullName.c_str() );
     }
   }
   
@@ -211,9 +212,9 @@ void HELLO::copyOrMove( const HELLO_ORB::object_list& what,
 {
   if ( CORBA::is_nil( where ) ) return; // bad parent
 
-  SALOMEDS::Study_var study = where->GetStudy();                               // study
-  SALOMEDS::StudyBuilder_var studyBuilder = study->NewBuilder();               // study builder
-  SALOMEDS::UseCaseBuilder_var useCaseBuilder = study->GetUseCaseBuilder();    // use case builder
+  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
+  SALOMEDS::StudyBuilder_var studyBuilder = aStudy->NewBuilder();               // study builder
+  SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder();    // use case builder
   SALOMEDS::SComponent_var father = where->GetFatherComponent();               // father component
   std::string dataType = father->ComponentDataType();
   if ( dataType != "HELLO" ) return; // not a HELLO component
