@@ -40,7 +40,6 @@ namespace {
     return fullName;
   }
 }
-
 /*!
   \brief Constructor
 
