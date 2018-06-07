@@ -28,7 +28,7 @@ The example module chosen to illustrate the process of SALOME module
 development is very simple. The module contains a single
 component and this component provides several services called \b
 hello and \b goodbye. 
-Each of these functions accepts a reference to the SALOME study and
+Each of these functions accepts
 a character string as the arguments and returns the status of the operation.
 The component also provides a simple GUI.
 
@@ -447,11 +447,11 @@ In particular, \a HELLO class implements \a hello() and \a goodbye() functions
 that are defined in the IDL interface \a HELLO_ORB::HELLO_Gen.
 
 \code
-HELLO_ORB::status HELLO::hello( SALOMEDS::Study_ptr study, const char* name )
+HELLO_ORB::status HELLO::hello( const char* name )
 {
 ...
 }
-HELLO_ORB::status HELLO::goodbye( SALOMEDS::Study_ptr study, const char* name )
+HELLO_ORB::status HELLO::goodbye( const char* name )
 {
 ...
 }
@@ -727,9 +727,6 @@ CORBA service.
 \code
 void HELLOGUI::hello()
 {
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  _PTR(Study) studyDS = study->studyDS();
-
   // request user name
   bool ok;
   QString name = QInputDialog::getText( getApp()->desktop(), tr( "QUE_HELLO_TITLE" ), tr( "QUE_ENTER_NAME" ),
@@ -737,7 +734,7 @@ void HELLOGUI::hello()
 
   if ( ok && !name.trimmed().isEmpty() ) {
     // say hello to SALOME
-    HELLO_ORB::status status = engine()->hello( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
+    HELLO_ORB::status status = engine()->hello( (const char*)name.toLatin1() );
 
     // update Object browser
     getApp()->updateObjectBrowser(true);
@@ -802,7 +799,7 @@ void HELLOGUI::goodbye()
 
   if ( !name.trimmed().isEmpty() ) {
     // say goodby to SALOME
-    HELLO_ORB::status status = engine()->goodbye( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
+    HELLO_ORB::status status = engine()->goodbye( (const char*)name.toLatin1() );
 
     // update Object browser
     getApp()->updateObjectBrowser(true);
@@ -991,7 +988,7 @@ by means of the \a container variable:
 >> salome.salome_init()
 >> import HELLO_ORB
 >> c = container.load_impl("HELLO", "HELLO")
->> c.hello(salome.myStudy, "Christian")
+>> c.hello("Christian")
 </pre>
 
 The last instruction invokes HELLO module's service \a hello(). Proceed as
@@ -1033,7 +1030,7 @@ is contained in the \c runHELLO.py \a test() function.
     import salome
     salome.salome_init()
     c = test(clt)
-    c.hello(salome.myStudy, "Christian")
+    c.hello("Christian")
 </pre>
 
 The test function creates the LifeCycle object. It then asks for the

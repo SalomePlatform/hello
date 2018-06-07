@@ -36,7 +36,6 @@ def test(clt):
 #
 
 if __name__ == "__main__":
-   import user
    from runSalome import *
    clt,args = main()
    
@@ -45,8 +44,8 @@ if __name__ == "__main__":
    #
    
    if clt != None:
-     print
-     print " --- registered objects tree in Naming Service ---"
+     print()
+     print(" --- registered objects tree in Naming Service ---")
      clt.showNS()
      session=clt.waitNS("/Kernel/Session")
      catalog=clt.waitNS("/Kernel/ModulCatalog")

@@ -56,20 +56,18 @@ module HELLO_ORB
   {
     /*!
       \brief Say hello to \a name
-      \param study SALOME study
       \param name person's name
       \return operation status
      */
-    status hello( in SALOMEDS::Study study, in string name )
+    status hello( in string name )
       raises (SALOME::SALOME_Exception);
 
     /*!
       \brief Say goodbye to \a name
-      \param study SALOME study
       \param name person's name
       \return operation status
      */
-    status goodbye( in SALOMEDS::Study study, in string name )
+    status goodbye( in string name )
       raises (SALOME::SALOME_Exception);
 
     /*!

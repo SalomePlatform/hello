@@ -50,8 +50,8 @@ public:
 	 const char* interfaceName );
   virtual ~HELLO();
 
-  HELLO_ORB::status hello  ( SALOMEDS::Study_ptr study, const char* name );
-  HELLO_ORB::status goodbye( SALOMEDS::Study_ptr study, const char* name );
+  HELLO_ORB::status hello  ( const char* name );
+  HELLO_ORB::status goodbye( const char* name );
   void              copyOrMove( const HELLO_ORB::object_list& what,
 				SALOMEDS::SObject_ptr where,
 				CORBA::Long row, CORBA::Boolean isCopy );

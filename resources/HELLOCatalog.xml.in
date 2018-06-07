@@ -42,7 +42,6 @@
             <component-author>Vadim SANDLER</component-author>
             <component-version>@SALOMEHELLO_VERSION@</component-version>
             <component-comment>Sample module</component-comment>
-            <component-multistudy>1</component-multistudy>
             <component-impltype>1</component-impltype>
             <component-icone>HELLO.png</component-icone>
             <constraint></constraint>
@@ -58,11 +57,6 @@
                         <service-comment>Hello function</service-comment>
                         <service-by-default>1</service-by-default>
                         <inParameter-list>
-                            <inParameter>
-                                <inParameter-name>study</inParameter-name>
-                                <inParameter-type>Study</inParameter-type>
-                                <inParameter-comment>study</inParameter-comment>
-                            </inParameter>
                             <inParameter>
                                 <inParameter-name>name</inParameter-name>
                                 <inParameter-type>string</inParameter-type>
@@ -85,11 +79,6 @@
                         <service-comment>Goodbye function</service-comment>
                         <service-by-default>0</service-by-default>
                         <inParameter-list>
-                            <inParameter>
-                                <inParameter-name>study</inParameter-name>
-                                <inParameter-type>Study</inParameter-type>
-                                <inParameter-comment>study</inParameter-comment>
-                            </inParameter>
                             <inParameter>
                                 <inParameter-name>name</inParameter-name>
                                 <inParameter-type>string</inParameter-type>

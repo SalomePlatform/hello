@@ -93,7 +93,7 @@ HELLO_ORB::HELLO_Gen_var HELLOGUI::engine()
   Perform general module initialization (like creation of actions,
   menus, toolbars, etc).
 
-  \note This function is invoked only once per study, when the module
+  \note This function is invoked only once, when the module
   is first time activated by the user.
   The study associated with the application might not exist
   (created or opened) when this function is invoked, so it is not
@@ -765,9 +765,6 @@ void HELLOGUI::testMe()
 */
 void HELLOGUI::hello()
 {
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  _PTR(Study) studyDS = study->studyDS();
-
   // request user name
   bool ok;
   QString name = QInputDialog::getText( getApp()->desktop(), tr( "QUE_HELLO_TITLE" ), tr( "QUE_ENTER_NAME" ),
@@ -775,7 +772,7 @@ void HELLOGUI::hello()
 
   if ( ok && !name.trimmed().isEmpty() ) {
     // say hello to SALOME
-    HELLO_ORB::status status = engine()->hello( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
+    HELLO_ORB::status status = engine()->hello( (const char*)name.toLatin1() );
 
     // update Object browser
     getApp()->updateObjectBrowser(true);
@@ -843,7 +840,7 @@ void HELLOGUI::goodbye()
 
   if ( !name.trimmed().isEmpty() ) {
     // say goodby to SALOME
-    HELLO_ORB::status status = engine()->goodbye( _CAST(Study, studyDS)->GetStudy(), (const char*)name.toLatin1() );
+    HELLO_ORB::status status = engine()->goodbye( (const char*)name.toLatin1() );
 
     // update Object browser
     getApp()->updateObjectBrowser(true);

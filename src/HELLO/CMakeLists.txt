@@ -37,6 +37,7 @@ SET(_link_LIBRARIES
   ${KERNEL_SalomeIDLKernel}
   ${KERNEL_OpUtil}
   ${KERNEL_SalomeContainer}
+  ${KERNEL_SalomeKernelHelpers}
   SalomeIDLHELLO
 )
 
