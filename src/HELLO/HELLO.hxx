@@ -38,17 +38,18 @@
 #include CORBA_SERVER_HEADER(HELLO_Gen)
 #include <SALOME_Component_i.hxx>
 
-class HELLOENGINE_EXPORT HELLO :
+class HELLOENGINE_EXPORT HELLO_Abstract :
   public POA_HELLO_ORB::HELLO_Gen,
   public Engines_Component_i 
 {
 public:
-  HELLO( CORBA::ORB_ptr orb,
+  HELLO_Abstract( CORBA::ORB_ptr orb,
 	 PortableServer::POA_ptr poa,
 	 PortableServer::ObjectId* contId, 
 	 const char* instanceName, 
-	 const char* interfaceName );
-  virtual ~HELLO();
+	 const char* interfaceName ,
+	 bool withRegistry = true);
+  virtual ~HELLO_Abstract();
 
   HELLO_ORB::status hello  ( const char* name );
   HELLO_ORB::status goodbye( const char* name );
@@ -56,6 +57,30 @@ public:
 				SALOMEDS::SObject_ptr where,
 				CORBA::Long row, CORBA::Boolean isCopy );
   virtual char*     getVersion();
+  // Get Study
+  virtual SALOMEDS::Study_var getStudyServant() = 0;
+};
+
+class HELLOENGINE_EXPORT HELLO_Session : public HELLO_Abstract
+{
+public:
+  HELLO_Session( CORBA::ORB_ptr orb,
+	 PortableServer::POA_ptr poa,
+	 PortableServer::ObjectId* contId, 
+	 const char* instanceName, 
+	 const char* interfaceName):HELLO_Abstract(orb,poa,contId,instanceName,interfaceName,true) { }
+   SALOMEDS::Study_var getStudyServant() override;
+};
+
+class HELLOENGINE_EXPORT HELLO_No_Session : public HELLO_Abstract
+{
+public:
+  HELLO_No_Session( CORBA::ORB_ptr orb,
+	 PortableServer::POA_ptr poa,
+	 PortableServer::ObjectId* contId, 
+	 const char* instanceName, 
+	 const char* interfaceName):HELLO_Abstract(orb,poa,contId,instanceName,interfaceName,false) { }
+  SALOMEDS::Study_var getStudyServant() override;
 };
 
 extern "C"

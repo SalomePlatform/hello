@@ -51,12 +51,13 @@ namespace {
   \param instanceName SALOME component instance name
   \param interfaceName SALOME component interface name
 */
-HELLO::HELLO( CORBA::ORB_ptr orb,
+HELLO_Abstract::HELLO_Abstract( CORBA::ORB_ptr orb,
 	      PortableServer::POA_ptr poa,
 	      PortableServer::ObjectId* contId, 
 	      const char* instanceName, 
-	      const char* interfaceName )
-  : Engines_Component_i( orb, poa, contId, instanceName, interfaceName )
+	      const char* interfaceName,
+        bool withRegistry)
+  : Engines_Component_i( orb, poa, contId, instanceName, interfaceName, false, withRegistry)
 {
   _thisObj = this;
   _id = _poa->activate_object( _thisObj ); // register and activate this servant object
@@ -67,7 +68,7 @@ HELLO::HELLO( CORBA::ORB_ptr orb,
 
   Clean up allocated resources
 */
-HELLO::~HELLO()
+HELLO_Abstract::~HELLO_Abstract()
 {
   // nothing to do
 }
@@ -77,7 +78,7 @@ HELLO::~HELLO()
   \param name person's name
   \return operation status
 */
-HELLO_ORB::status HELLO::hello( const char* name )
+HELLO_ORB::status HELLO_Abstract::hello( const char* name )
 {
   // set exception handler to catch unexpected CORBA exceptions
   Unexpect aCatch(SALOME_SalomeException);
@@ -85,7 +86,7 @@ HELLO_ORB::status HELLO::hello( const char* name )
   // set result status to error initially
   HELLO_ORB::status result = HELLO_ORB::OP_ERR_UNKNOWN;
 
-  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
+  SALOMEDS::Study_var aStudy = this->getStudyServant();
   // check if reference to study is valid
   if ( !CORBA::is_nil( aStudy ) ) {
     // get full object path
@@ -143,7 +144,7 @@ HELLO_ORB::status HELLO::hello( const char* name )
   \param name person's name
   \return operation status
 */
-HELLO_ORB::status HELLO::goodbye( const char* name )
+HELLO_ORB::status HELLO_Abstract::goodbye( const char* name )
 {
   // set exception handler to catch unexpected CORBA exceptions
   Unexpect aCatch(SALOME_SalomeException);
@@ -151,7 +152,7 @@ HELLO_ORB::status HELLO::goodbye( const char* name )
   // set result status to error initially
   HELLO_ORB::status result = HELLO_ORB::OP_ERR_UNKNOWN;
 
-  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
+  SALOMEDS::Study_var aStudy = this->getStudyServant();
   // check if reference to study is valid
   if ( !CORBA::is_nil( aStudy ) ) {
     // get full object path
@@ -205,13 +206,13 @@ HELLO_ORB::status HELLO::goodbye( const char* name )
   \param row position in the parent object's children list at which objects are copied/moved
   \param isCopy \c true if object are copied or \c false otherwise
 */
-void HELLO::copyOrMove( const HELLO_ORB::object_list& what,
+void HELLO_Abstract::copyOrMove( const HELLO_ORB::object_list& what,
 			SALOMEDS::SObject_ptr where,
 			CORBA::Long row, CORBA::Boolean isCopy )
 {
   if ( CORBA::is_nil( where ) ) return; // bad parent
 
-  SALOMEDS::Study_var aStudy = KERNEL::getStudyServant();
+  SALOMEDS::Study_var aStudy = this->getStudyServant();
   SALOMEDS::StudyBuilder_var studyBuilder = aStudy->NewBuilder();               // study builder
   SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder();    // use case builder
   SALOMEDS::SComponent_var father = where->GetFatherComponent();               // father component
@@ -250,13 +251,25 @@ void HELLO::copyOrMove( const HELLO_ORB::object_list& what,
 }
 
 // Version information
-char* HELLO::getVersion()
+char* HELLO_Abstract::getVersion()
 {
 #if defined(HELLO_DEVELOPMENT)
   return CORBA::string_dup(HELLO_VERSION_STR"dev");
 #else
   return CORBA::string_dup(HELLO_VERSION_STR);
 #endif
+}
+
+SALOMEDS::Study_var HELLO_Session::getStudyServant()
+{
+  return KERNEL::getStudyServant();
+}
+
+#include "SALOMEDS_Study_i.hxx"
+
+SALOMEDS::Study_var HELLO_No_Session::getStudyServant()
+{
+  return SALOMEDS::Study::_duplicate(KERNEL::getStudyServantSA());
 }
 
 extern "C"
@@ -276,7 +289,7 @@ extern "C"
 						 const char* instanceName, 
 						 const char* interfaceName )
   {
-    HELLO* component = new HELLO( orb, poa, contId, instanceName, interfaceName );
+    HELLO_Session* component = new HELLO_Session( orb, poa, contId, instanceName, interfaceName );
     return component->getId();
   }
 }

@@ -22,6 +22,7 @@
 
 #include "HELLOGUI.h"
 #include "HELLO_version.h"
+#include "HELLO_Component_Generator.hxx"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -40,6 +41,8 @@
 #include <SALOME_LifeCycleCORBA.hxx>
 #include <SALOMEDS_SObject.hxx>
 #include <SALOMEDS_Study.hxx>
+#include "SALOME_NamingService_Abstract.hxx"
+#include "SALOME_KernelServices.hxx"
 
 #include <QInputDialog>
 
@@ -881,9 +884,20 @@ void HELLOGUI::goodbye()
 void HELLOGUI::init()
 {
   // initialize HELLO module engine (load, if necessary)
-  if ( CORBA::is_nil( myEngine ) ) {
-    Engines::EngineComponent_var comp =
-    SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "HELLO" );
+  if ( CORBA::is_nil( myEngine ) )
+  {
+    SALOME_NamingService_Abstract *ns = SalomeApp_Application::namingService();
+    Engines::EngineComponent_var comp;
+    if(ns->IsTrueNS())
+    {
+      comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "HELLO" );
+    }
+    else
+    {
+      comp = RetrieveHELLOInstance();
+      CORBA::Object_var comp2 = CORBA::Object::_narrow(comp);
+      KERNEL::RegisterCompo("HELLO",comp2);
+    }
     myEngine = HELLO_ORB::HELLO_Gen::_narrow( comp );
   }
 }

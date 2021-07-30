@@ -46,6 +46,7 @@ SET(_link_LIBRARIES
 # header files / no moc processing
 SET(HELLO_HEADERS
   HELLO.hxx
+  HELLO_Component_Generator.hxx
 )
 
 # --- sources ---
@@ -53,6 +54,7 @@ SET(HELLO_HEADERS
 # sources / static
 SET(HELLO_SOURCES
   HELLO.cxx
+  HELLO_Component_Generator.cxx
 )
 
 # --- rules ---
