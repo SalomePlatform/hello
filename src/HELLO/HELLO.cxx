@@ -32,6 +32,10 @@
 
 #include <string>
 
+#ifdef GetObject
+#undef GetObject
+#endif
+
 namespace {
   static std::string studyName( const std::string& name )
   {
