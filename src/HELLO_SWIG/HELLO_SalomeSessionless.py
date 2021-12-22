@@ -1,4 +1,5 @@
-# Copyright (C) 2012-2021  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2021  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,18 +18,11 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-##
-# Common packages
-##
-SET(SUBDIRS_COMMON
-  HELLO HELLOGUI HELLO_SWIG
-)
-
-SET(SUBDIRS
-  ${SUBDIRS_COMMON}
-)
-
-FOREACH(dir ${SUBDIRS})
- ADD_SUBDIRECTORY(${dir})
-ENDFOREACH(dir ${SUBDIRS})
-            
+def buildInstance(orb):
+    import HelloHelper
+    hello_ior = HelloHelper.BuildHELLOInstance()
+    import HELLO_ORB
+    import CORBA
+    orb=CORBA.ORB_init([''])
+    hello = orb.string_to_object(hello_ior)
+    return hello, orb
