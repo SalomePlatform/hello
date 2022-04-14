@@ -22,7 +22,6 @@
 
 #include "HELLOGUI.h"
 #include "HELLO_version.h"
-#include "HELLO_Component_Generator.hxx"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -887,17 +886,7 @@ void HELLOGUI::init()
   if ( CORBA::is_nil( myEngine ) )
   {
     SALOME_NamingService_Abstract *ns = SalomeApp_Application::namingService();
-    Engines::EngineComponent_var comp;
-    if(ns->IsTrueNS())
-    {
-      comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "HELLO" );
-    }
-    else
-    {
-      comp = RetrieveHELLOInstance();
-      CORBA::Object_var comp2 = CORBA::Object::_narrow(comp);
-      KERNEL::RegisterCompo("HELLO",comp2);
-    }
+    Engines::EngineComponent_var comp = SalomeApp_Application::lcc()->FindOrLoad_Component("FactoryServer", "HELLO");
     myEngine = HELLO_ORB::HELLO_Gen::_narrow( comp );
   }
 }

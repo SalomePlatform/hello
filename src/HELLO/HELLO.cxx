@@ -287,13 +287,23 @@ extern "C"
     \param interfaceName SALOME component interface name
     \return CORBA object identifier of the registered servant
   */
-  PortableServer::ObjectId* HELLOEngine_factory( CORBA::ORB_ptr orb,
-						 PortableServer::POA_ptr poa, 
-						 PortableServer::ObjectId* contId,
-						 const char* instanceName, 
-						 const char* interfaceName )
-  {
-    HELLO_Session* component = new HELLO_Session( orb, poa, contId, instanceName, interfaceName );
-    return component->getId();
-  }
+	PortableServer::ObjectId* HELLOEngine_factory(CORBA::ORB_ptr orb,
+		PortableServer::POA_ptr poa,
+		PortableServer::ObjectId* contId,
+		const char* instanceName,
+		const char* interfaceName)
+	{
+		CORBA::Object_var o = poa->id_to_reference(*contId);
+		Engines::Container_var cont = Engines::Container::_narrow(o);
+		if (cont->is_SSL_mode())
+		{
+			HELLO_No_Session* component = new HELLO_No_Session(orb, poa, contId, instanceName, interfaceName);
+			return component->getId();
+		}
+		else
+		{
+			HELLO_Session* component = new HELLO_Session(orb, poa, contId, instanceName, interfaceName);
+			return component->getId();
+		}
+	}
 }
